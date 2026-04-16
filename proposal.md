@@ -1,17 +1,18 @@
-# Propuesta TP DSW
+# The Hawkins Forum
 
 ## Grupo
 ### Integrantes
-* legajo - Apellido(s), Nombre(s)
+* 54827 - Rosati, Ignacio Jesús
+* - Franceschetti, Luca
+* - Dzhaparova, Ruf
 
 ### Repositorios
 * [frontend app](http://hyperlinkToGihubOrGitlab)
 * [backend app](http://hyperlinkToGihubOrGitlab)
-*Nota*: si utiliza un monorepo indicar un solo link con fullstack app.
 
 ## Tema
 ### Descripción
-*2 a 6 líneas describiendo el negocio (menos es más)*
+Aplicación web que simula un foro comunitario en el pueblo de Hawkins perteneciente al universo de Stranger Things, donde los usuarios pueden compartir teorías y reportar eventos extraños. La plataforma permite la interacción entre usuarios mediante publicaciones, comentarios y clasificaciones, facilitando la construcción colectiva de explicaciones sobre fenómenos inusuales que ocurren en el pueblo.
 
 ### Modelo
 ![imagen del modelo]()
