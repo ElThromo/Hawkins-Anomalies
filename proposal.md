@@ -4,7 +4,7 @@
 ### Integrantes
 * 54827 - Rosati, Ignacio Jesús
 * - Franceschetti, Luca
-* - Dzhaparova, Ruf
+* 53668 - Dzhaparova, Ruf
 
 ### Repositorios
 * [frontend app](http://hyperlinkToGihubOrGitlab)
