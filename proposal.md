@@ -16,6 +16,8 @@ Aplicación web que simula un sistema de reportes en el pueblo de Hawkins perten
 
 ### Modelo
 [hawkins anomalies diagrama.png](https://github.com/ElThromo/The-Hawkins-Forum/blob/77440dffac96a5411f5e97402ecfaa09a3b47ab5/hawkins%20anomalies%20diagrama.png)
+
+/docs/hawkins anomalies diagrama.png
 ## Alcance Funcional 
 
 ### Alcance Mínimo
