@@ -3,7 +3,7 @@
 ## Grupo
 ### Integrantes
 * 54827 - Rosati, Ignacio Jesús
-* - Franceschetti, Luca
+* 54824 - Franceschetti, Luca
 * 53668 - Dzhaparova, Ruf
 
 ### Repositorios
@@ -28,26 +28,22 @@ Aplicación web que simula un foro comunitario en el pueblo de Hawkins perteneci
 Regularidad:
 |Req|Detalle|
 |:-|:-|
-|CRUD simple|1. CRUD Tipo Habitacion<br>2. CRUD Servicio<br>3. CRUD Localidad|
-|CRUD dependiente|1. CRUD Habitación {depende de} CRUD Tipo Habitacion<br>2. CRUD Cliente {depende de} CRUD Localidad|
-|Listado<br>+<br>detalle| 1. Listado de habitaciones filtrado por tipo de habitación, muestra nro y tipo de habitación => detalle CRUD Habitacion<br> 2. Listado de reservas filtrado por rango de fecha, muestra nro de habitación, fecha inicio y fin estadía, estado y nombre del cliente => detalle muestra datos completos de la reserva y del cliente|
-|CUU/Epic|1. Reservar una habitación para la estadía<br>2. Realizar el check-in de una reserva|
+|CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria<br>3. Zona |
+|CRUD dependiente|1. CRUD Reporte {depende de} CRUD Usuario<br>2. CRUD Comentario {depende de} CRUD Usuario y Reporte|
+|Listado<br>+<br>detalle| 1. Listado de reportes, muestra título, categori y usuario => detalle muestra contenido completo y comentarios 2. Listado de publicaciones por usuario|
+|CUU/Epic|1. Realizar reporte de anomalia<br>2. Comentar o reaccionar al reporte de otro usuario|
 
 
 Adicionales para Aprobación
 |Req|Detalle|
 |:-|:-|
-|CRUD |1. CRUD Tipo Habitacion<br>2. CRUD Servicio<br>3. CRUD Localidad<br>4. CRUD Provincia<br>5. CRUD Habitación<br>6. CRUD Empleado<br>7. CRUD Cliente|
-|CUU/Epic|1. Reservar una habitación para la estadía<br>2. Realizar el check-in de una reserva<br>3. Realizar el check-out y facturación de estadía y servicios|
+|CRUD |1. CRUD Usuario<br>2. CRUD Categoria<br>3. CRUD reporte<br>4. Comentario<br>5. Zona<br>6. CRUD Reaccion<br>7. Resolucion|
+|CUU/Epic|1. Validar y cambiar el estado de un reporte ((No verificado, En investigacion, Verificado) <br>2. Agregar resolucion al reporte luego de la investegacion pertinente.|
 
 
 ### Alcance Adicional Voluntario
-
-*Nota*: El Alcance Adicional Voluntario es opcional, pero ayuda a que la funcionalidad del sistema esté completa y será considerado en la nota en función de su complejidad y esfuerzo.
-
 |Req|Detalle|
 |:-|:-|
-|Listados |1. Estadía del día filtrado por fecha muestra, cliente, habitaciones y estado <br>2. Reservas filtradas por cliente muestra datos del cliente y de cada reserve fechas, estado cantidad de habitaciones y huespedes|
-|CUU/Epic|1. Consumir servicios<br>2. Cancelación de reserva|
-|Otros|1. Envío de recordatorio de reserva por email|
+|Listados |1. Listado de reportes filtrados por categoría (criaturas, fenómenos, etc.) <br>2. Listado de usuarios => detalle con sus publicaciones|
+|Otros|1. Notificaciones: notificar al usuario cuando alguien comenta o reacciona a su reporte.|
 
