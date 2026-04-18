@@ -20,7 +20,7 @@ Aplicación web que simula un foro comunitario en el pueblo de Hawkins perteneci
 
 ### Alcance Mínimo
 
-*Nota*: el siguiente es un ejemplo para un grupo de 3 integrantes para un sistema de hotel. El 
+
 
 Regularidad:
 |Req|Detalle|
