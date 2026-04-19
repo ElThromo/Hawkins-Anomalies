@@ -12,7 +12,7 @@
 
 ## Tema
 ### Descripción
-Aplicación web que simula un sistema de reportes en el pueblo de Hawkins perteneciente al universo de Stranger Things, donde los usuarios pueden compartir reportar eventos extraños y anomalias. Los reportes incluyen información relevante como descripción, categoría y ubicación, y pueden ser comentados por otros usuarios. Además, un grupo de investigadores pueden ir a la ubicacion del hecho para investigar y luego actualizar el estado de los reportes, y asi facilitar la comprensión colectiva de los fenómenos.
+Aplicación web que simula un sistema de reportes en el pueblo de Hawkins perteneciente al universo de Stranger Things, donde los habitantes pueden reportar eventos extraños y anomalias. Los reportes incluyen información relevante como descripción, categoría y ubicación, y pueden ser comentados por otros usuarios. Además, un grupo de investigadores pueden ir a la ubicacion del hecho para investigar y luego actualizar el estado de los reportes acompañados de una resolucion, de esta manera se facilita la comprensión colectiva de los fenómenos.
 
 ### Modelo
 <img width="721" height="554" alt="hawkins_anomalies_diagrama" src="https://github.com/user-attachments/assets/1d20d611-1f02-4867-a577-02c50f3b41cd" />
