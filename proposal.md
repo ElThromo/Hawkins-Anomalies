@@ -37,7 +37,7 @@ Adicionales para Aprobación
 |Req|Detalle|
 |:-|:-|
 |CRUD |1. CRUD Usuario<br>2. CRUD Categoria<br>3. CRUD Zona<br>4. CRUD Comentario<br>5. CRUD Reporte<br>6. CRUD Reaccion<br>7. CRUD Resolucion|
-|CUU/Epic|1. Validar y cambiar el estado de un reporte (No verificado, En investigacion, Verificado) <br>2. Agregar resolucion al reporte luego de la investegacion pertinente.|
+|CUU/Epic|1. Validar y cambiar el estado de un reporte (No verificado, En investigacion, Verificado) <br>2. Agregar una resolución a un reporte luego de la investigación realizada por un investigador|
 
 
 ### Alcance Adicional Voluntario
