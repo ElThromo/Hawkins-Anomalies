@@ -29,7 +29,7 @@ Regularidad:
 |:-|:-|
 |CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria<br>3. CRUD Zona |
 |CRUD dependiente|1. CRUD Reporte {depende de} CRUD Usuario<br>2. CRUD Comentario {depende de} CRUD Usuario y Reporte|
-|Listado<br>+<br>detalle| 1. Listado de reportes, muestra título, categoria y usuario => detalle muestra contenido completo y comentarios <br>2. Listado de publicaciones por usuario|
+|Listado<br>+<br>detalle| 1. Listado de reportes, muestra título, categoria y usuario => detalle muestra contenido completo y comentarios <br>2. Listado de reportes por usuario|
 |CUU/Epic|1. Realizar reporte de anomalia<br>2. Comentar o reaccionar al reporte de otro usuario|
 
 
@@ -43,6 +43,6 @@ Adicionales para Aprobación
 ### Alcance Adicional Voluntario
 |Req|Detalle|
 |:-|:-|
-|Listados |1. Listado de reportes filtrados por categoría (criaturas, fenómenos, etc.) <br>2. Listado de usuarios => detalle con sus publicaciones|
+|Listados |1. Listado de reportes filtrados por categoría (criaturas, fenómenos, etc.) <br>2. Listado de usuarios => detalle con sus reportes|
 |Otros|1. Notificaciones: notificar al usuario cuando alguien comenta o reacciona a su reporte.|
 
