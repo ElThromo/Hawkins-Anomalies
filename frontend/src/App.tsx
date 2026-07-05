@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Reportes from "./pages/Reportes";
 import Mapa from "./pages/Mapa";
+import Register from "./pages/Register";
 
 function App() {
 
@@ -20,6 +21,8 @@ function App() {
         <Route path= "/reportes" element ={<Reportes />} />
 
         <Route path="/mapa" element={<Mapa />} />
+
+        <Route path="/register" element={<Register />} />
 
       </Routes>
 
