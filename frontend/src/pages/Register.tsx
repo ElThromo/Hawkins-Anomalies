@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "../App.css";
 
 function Register() {
@@ -34,7 +35,7 @@ function Register() {
 
         <p className="register">
           ¿Ya tienes cuenta?
-          <a href="#"> Iniciar sesión</a>
+          <Link to="/login"> Iniciar sesión</Link>
         </p>
       </div>
     </div>

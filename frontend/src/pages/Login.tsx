@@ -1,4 +1,5 @@
 import "../App.css";
+import { Link } from "react-router-dom";
 
 function Login() {
   return (
@@ -26,7 +27,7 @@ function Login() {
 
         <p className="register">
           ¿No tienes cuenta?
-          <a href="#"> Registrarse</a>
+          <Link to="/register"> Registrarse</Link>
         </p>
 
       </div>
