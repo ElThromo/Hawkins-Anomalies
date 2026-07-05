@@ -1,0 +1,131 @@
+.sidebar{
+
+    width:260px;
+
+    height:100vh;
+
+    background:#121212;
+
+    border-right:1px solid #2c2c2c;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
+}
+
+.logo{
+
+    color:#c1121f;
+
+    font-size:2.5rem;
+
+    text-align:center;
+
+    margin-top:40px;
+
+    font-weight:800;
+
+    font-family:"Elms Sans",sans-serif;
+
+    animation: glow 3s infinite alternate
+
+}
+
+.sidebar nav{
+
+    display:flex;
+
+    flex-direction:column;
+
+    margin-top:60px;
+
+}
+
+.sidebar nav a{
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:18px 35px;
+
+    transition:.2s;
+
+}
+
+.sidebar nav a:hover{
+
+    background:#202020;
+
+    color:#e63946;
+
+}
+
+.sidebar-bottom{
+
+    padding:30px;
+
+}
+
+.user{
+
+    color:white;
+
+    margin-bottom:20px;
+
+}
+
+.sidebar button{
+
+    width:100%;
+
+    padding:12px;
+
+    background:#c1121f;
+
+    border:none;
+
+    color:white;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.sidebar button:hover{
+
+    background:#e63946;
+
+}
+
+/* Prueba de animacion para logo en sidebar*/
+@keyframes glow{
+
+    from{
+
+        text-shadow:
+            0 0 5px #730e0e;
+
+    }
+
+    to{
+
+        text-shadow:
+            0 0 10px #730e0e,
+            0 0 20px #730e0e;
+
+    }
+
+}
