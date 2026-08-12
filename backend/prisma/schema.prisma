@@ -17,3 +17,9 @@ model Zona {
   descripcion  String
   nivelPeligro String
 }
+
+model Categoria {
+  idCategoria       Int    @id @default(autoincrement())
+  nombre       String
+  descripcion  String
+}
