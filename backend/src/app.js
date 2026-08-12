@@ -1,10 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const zonaRoutes = require("./zona/zona.routes");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/zonas", zonaRoutes);
 
 let usuarios = [
     {

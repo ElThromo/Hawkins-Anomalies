@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Reportes from "./pages/Reportes";
 import Mapa from "./pages/Mapa";
 import Register from "./pages/Register";
+import Zonas from "./pages/Zonas";
 
 function App() {
 
@@ -23,7 +24,9 @@ function App() {
         <Route path="/mapa" element={<Mapa />} />
 
         <Route path="/register" element={<Register />} />
-
+        
+        <Route path="/zonas" element={<Zonas />} />
+      
       </Routes>
 
     </BrowserRouter>
