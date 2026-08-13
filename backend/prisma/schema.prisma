@@ -12,6 +12,22 @@ datasource db {
   provider = "mysql"
 }
 
+model Usuario {
+  idUsuario       Int      @id @default(autoincrement())
+  nombre          String   @unique
+  email           String   @unique
+  contrasenaHash  String
+  rol             Rol      @default(USUARIO)
+  activo          Boolean  @default(true)
+  fechaCreado     DateTime @default(now())
+}
+
+enum Rol {
+  USUARIO
+  ADMIN
+  INVESTIGADOR
+}
+
 model Zona {
   idZona       Int    @id @default(autoincrement())
   nombre       String
