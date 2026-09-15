@@ -7,12 +7,24 @@ type Zona = {
   nivelPeligro: string;
 };
 
+const nivelesPeligro = [
+  { nombre: "Bajo (transitable)", color: "#42c76b" },
+  { nombre: "Medio (precaucion)", color: "#e6c44a" },
+  { nombre: "Alto (evitar)", color: "#f28c45" },
+  { nombre: "Crítico (prohibido)", color: "#e84b5b" },
+];
+
+function colorDelNivel(nivel: string) {
+  return nivelesPeligro.find((opcion) => opcion.nombre === nivel)?.color ?? "#d1d1d1";
+}
+
 function Zonas() {
   const [zonas, setZonas] = useState<Zona[]>([]);
 
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [nivelPeligro, setNivelPeligro] = useState("");
+  const [nivelesAbiertos, setNivelesAbiertos] = useState(false);
 
   const [idEditando, setIdEditando] = useState<number | null>(null);
 
@@ -88,6 +100,7 @@ function Zonas() {
     setNombre(zona.nombre);
     setDescripcion(zona.descripcion);
     setNivelPeligro(zona.nivelPeligro);
+    setNivelesAbiertos(false);
   }
 
   async function eliminarZona(idZona: number) {
@@ -119,16 +132,17 @@ function Zonas() {
     setNombre("");
     setDescripcion("");
     setNivelPeligro("");
+    setNivelesAbiertos(false);
     setIdEditando(null);
   }
 
   return (
-    <div>
+    <div className="zonas-page">
       <h1>Zonas</h1>
 
       <h2>{idEditando === null ? "Crear zona" : "Editar zona"}</h2>
 
-      <div>
+      <div className="zonas-form">
         <input
           type="text"
           placeholder="Nombre"
@@ -143,12 +157,54 @@ function Zonas() {
           onChange={(e) => setDescripcion(e.target.value)}
         />
 
-        <input
-          type="text"
-          placeholder="Nivel de peligro"
-          value={nivelPeligro}
-          onChange={(e) => setNivelPeligro(e.target.value)}
-        />
+        <div
+          className="nivel-selector"
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+              setNivelesAbiertos(false);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setNivelesAbiertos(false);
+          }}
+        >
+          <button
+            type="button"
+            className="nivel-toggle"
+            aria-expanded={nivelesAbiertos}
+            onClick={() => setNivelesAbiertos(!nivelesAbiertos)}
+          >
+            <span className="nivel-toggle-contenido">
+              <span
+                className="nivel-indicador"
+                style={{ backgroundColor: nivelPeligro ? colorDelNivel(nivelPeligro) : "#999" }}
+              />
+              <span style={{ color: nivelPeligro ? colorDelNivel(nivelPeligro) : "#999" }}>
+                {nivelPeligro || "Nivel de peligro"}
+              </span>
+            </span>
+            <span aria-hidden="true">▾</span>
+          </button>
+
+          {nivelesAbiertos && (
+            <div className="nivel-opciones" role="group" aria-label="Niveles de peligro">
+              {nivelesPeligro.map((nivel) => (
+                <button
+                  key={nivel.nombre}
+                  type="button"
+                  className="nivel-opcion"
+                  onClick={() => {
+                    setNivelPeligro(nivel.nombre);
+                    setNivelesAbiertos(false);
+                  }}
+                >
+                  <span className="nivel-indicador" style={{ backgroundColor: nivel.color }} />
+                  <span style={{ color: nivel.color }}>{nivel.nombre}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         <button onClick={guardarZona}>
           {idEditando === null ? "Crear zona" : "Guardar cambios"}
@@ -162,12 +218,17 @@ function Zonas() {
       <h2>Listado de zonas</h2>
 
       {zonas.map((zona) => (
-        <div key={zona.idZona}>
+        <div className="zona-card" key={zona.idZona}>
           <h3>{zona.nombre}</h3>
 
           <p>{zona.descripcion}</p>
 
-          <p>Nivel de peligro: {zona.nivelPeligro}</p>
+          <p>
+            Nivel de peligro: {" "}
+            <span className="nivel-valor" style={{ color: colorDelNivel(zona.nivelPeligro) }}>
+              {zona.nivelPeligro}
+            </span>
+          </p>
 
           <button onClick={() => editarZona(zona)}>Editar</button>
 
