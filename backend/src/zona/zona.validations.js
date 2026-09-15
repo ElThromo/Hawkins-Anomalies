@@ -17,6 +17,18 @@ function validarZona(req, res, next) {
     });
   }
 
+  if (!nombre.trim() || !descripcion.trim() || !nivelPeligro.trim()) {
+    return res.status(400).json({
+      error: "Nombre, descripción y nivel de peligro son obligatorios"
+    });
+  }
+  
+  if (/\d/.test(nombre) || /\d/.test(descripcion) || /\d/.test(nivelPeligro)) {
+  return res.status(400).json({
+    error: "Los campos de la zona deben contener texto, no números."
+  });
+  }
+
   next();
 }
 

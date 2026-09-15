@@ -14,7 +14,13 @@ async function obtenerZonas(req, res) {
 // OBTENER UNA ZONA POR ID
 async function obtenerZonaPorId(req, res) {
     try {
-        const id = parseInt(req.params.id);
+        const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({
+    error: "El ID de la zona debe ser un entero positivo"
+    });
+    }
         const zona = await zonaService.obtenerZonaPorId(id);
 
         if (!zona) {
@@ -46,8 +52,17 @@ async function crearZona(req, res) {
 // ACTUALIZAR UNA ZONA
 async function actualizarZona(req, res) {
     try {
-        const id = parseInt(req.params.id);
-        const zona = await zonaService.actualizarZona(id, req.body);
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({ error: "El ID de la zona debe ser un entero positivo" });
+    }  
+    const zonaExistente = await zonaService.obtenerZonaPorId(id);
+
+    if (!zonaExistente) {
+    return res.status(404).json({ error: "Zona no encontrada" });
+    }        
+    const zona = await zonaService.actualizarZona(id, req.body);
 
         res.json({
             mensaje: "Zona actualizada",
@@ -61,7 +76,18 @@ async function actualizarZona(req, res) {
 // ELIMINAR UNA ZONA
 async function eliminarZona(req, res) {
     try {
-        const id = parseInt(req.params.id);
+        const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({
+    error: "El ID de la zona debe ser un entero positivo"
+    });
+    }
+    const zona = await zonaService.obtenerZonaPorId(id);
+
+    if (!zona) {
+    return res.status(404).json({ error: "Zona no encontrada" });
+    }
         await zonaService.eliminarZona(id);
 
         res.json({
