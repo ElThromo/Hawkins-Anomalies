@@ -20,6 +20,7 @@ model Usuario {
   rol             Rol      @default(USUARIO)
   activo          Boolean  @default(true)
   fechaCreado     DateTime @default(now())
+  reportes        Reporte[]
 }
 
 enum Rol {
@@ -33,10 +34,43 @@ model Zona {
   nombre       String
   descripcion  String
   nivelPeligro String
+  reportes     Reporte[]
 }
 
 model Categoria {
   idCategoria       Int    @id @default(autoincrement())
   nombre       String
   descripcion  String
+  reportes     Reporte[]
+}
+
+model Reporte {
+  idReporte    Int           @id @default(autoincrement())
+  titulo       String
+  cuerpo       String        @db.Text
+  fechaHora    DateTime      @default(now())
+  estado       EstadoReporte @default(NO_VERIFICADO)
+
+  idZona       Int
+  idUsuario    Int
+  idCategoria  Int
+
+  zona         Zona          @relation(fields: [idZona], references: [idZona])
+  usuario      Usuario       @relation(fields: [idUsuario], references: [idUsuario])
+  categoria    Categoria     @relation(fields: [idCategoria], references: [idCategoria])
+
+  imagenes     ImagenReporte[]
+}
+
+enum EstadoReporte {
+  NO_VERIFICADO
+  EN_INVESTIGACION
+  VERIFICADO
+}
+
+model ImagenReporte {
+  idImagen   Int     @id @default(autoincrement())
+  url        String
+  idReporte  Int
+  reporte    Reporte @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
 }

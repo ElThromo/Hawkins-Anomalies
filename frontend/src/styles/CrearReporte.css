@@ -1,0 +1,65 @@
+.reporte-box {
+    background: #121212;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 35px;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.reporte-box label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #bdbdbd;
+    font-size: 0.9rem;
+}
+
+.reporte-box input,
+.reporte-box textarea,
+.reporte-box select {
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #2d2d2d;
+    color: white;
+    font-size: 15px;
+    font-family: "Roboto", sans-serif;
+}
+
+.reporte-box textarea {
+    resize: vertical;
+}
+
+.reporte-selects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.reporte-box button {
+    padding: 14px;
+    background: #8b0000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .25s;
+    font-size: 15px;
+}
+
+.reporte-box button:hover:not(:disabled) {
+    background: #b40000;
+}
+
+.reporte-box button:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+.reporte-error {
+    color: #e63946;
+    text-align: center;
+}

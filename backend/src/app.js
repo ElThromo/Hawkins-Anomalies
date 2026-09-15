@@ -6,6 +6,7 @@ const authRoutes = require("./auth/auth.routes");
 const zonaRoutes = require("./zona/zona.routes");
 const categoriaRoutes = require("./categoria/categoria.routes");
 const usuarioRoutes = require("./usuario/usuario.routes");
+const reporteRoutes = require("./reporte/reporte.routes");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use("/auth", authRoutes);
 app.use("/zonas", zonaRoutes);
 app.use("/categorias", categoriaRoutes);
 app.use("/usuarios", usuarioRoutes);
+app.use("/reportes", reporteRoutes);
 
 app.listen(3000, () => {
 

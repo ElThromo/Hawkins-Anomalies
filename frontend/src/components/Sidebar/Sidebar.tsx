@@ -25,7 +25,12 @@ function Sidebar() {
         {usuario ? (
           <>
             <p className="user">{usuario.nombre}</p>
-            <button onClick={handleLogout}>Cerrar sesión</button>
+            <Link to="/crear-reporte">
+              <button>+ Crear reporte</button>
+            </Link>
+            <button onClick={handleLogout} style={{ marginTop: "10px" }}>
+              Cerrar sesión
+            </button>
           </>
         ) : (
           <>
