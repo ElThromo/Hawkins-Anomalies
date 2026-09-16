@@ -1,4 +1,4 @@
-require("dotenv").config(); // 👈 PRIMERA LÍNEA, antes de todo
+require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
