@@ -63,6 +63,7 @@ model Reporte {
 
   imagenes     ImagenReporte[]
   comentarios     Comentario[]
+  resoluciones Resolucion[]
 }
 
 enum EstadoReporte {
@@ -96,4 +97,14 @@ model Vigilante {
 
   idZona      Int
   zona        Zona   @relation(fields: [idZona], references: [idZona])
+}
+
+model Resolucion {
+  idResolucion     Int      @id @default(autoincrement())
+  idReporte        Int
+  resolucion       String
+  cuerpoResolucion String   @db.Text
+  fechaHora        DateTime @default(now())
+
+  reporte          Reporte  @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
 }

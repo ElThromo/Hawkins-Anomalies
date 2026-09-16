@@ -11,6 +11,8 @@ const usuarioRoutes = require("./usuario/usuario.routes");
 const reporteRoutes = require("./reporte/reporte.routes");
 const comentarioRoutes = require("./comentario/comentario.routes");
 const vigilanteRoutes = require("./vigilante/vigilante.routes");
+const resolucionRoutes = require("./resolucion/resolucion.routes");
+
 
 const app = express();
 
@@ -25,6 +27,7 @@ app.use("/comentarios", comentarioRoutes);
 app.use("/usuarios", usuarioRoutes);
 app.use("/reportes", reporteRoutes);
 app.use("/vigilantes", vigilanteRoutes);
+app.use("/resoluciones", resolucionRoutes);
 
 app.listen(3000, () => {
     console.log("Servidor funcionando en puerto 3000");
