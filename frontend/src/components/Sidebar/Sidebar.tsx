@@ -1,18 +1,14 @@
 import "./Sidebar.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/useAuth";
+import { Link } from "react-router-dom";
 import { useSidebar } from "../../context/useSidebar";
 
-function Sidebar() {
-  const { usuario, logout } = useAuth();
-  const { abierta, toggleSidebar, cerrarSidebar } = useSidebar();
-  const navigate = useNavigate();
+import iconoInicio from "../../assets/home.png";
+import iconoMapa from "../../assets/mapa.png";
+import iconoReporte from "../../assets/reporte.png";
 
-  function handleLogout() {
-    logout();
-    navigate("/login");
-    cerrarSidebarSiEsMobile();
-  }
+function Sidebar() {
+
+  const { abierta, cerrarSidebar } = useSidebar();
 
   function cerrarSidebarSiEsMobile() {
     if (window.innerWidth < 768) {
@@ -22,40 +18,28 @@ function Sidebar() {
 
   return (
     <>
-      <button className="sidebar-toggle" onClick={toggleSidebar}>
-        {abierta ? "✕" : "☰"}
-      </button>
-
       <div className={`sidebar-overlay ${abierta ? "overlay-visible" : ""}`} onClick={cerrarSidebar} />
 
       <aside className={`sidebar ${abierta ? "sidebar-abierta" : "sidebar-cerrada"}`}>
         <h1 className="logo">Hawkins Anomalies</h1>
 
         <nav>
-          <Link to="/" onClick={cerrarSidebarSiEsMobile}>Inicio</Link>
-          <Link to="/reportes" onClick={cerrarSidebarSiEsMobile}>Reportes</Link>
-          <Link to="/mapa" onClick={cerrarSidebarSiEsMobile}>Mapa</Link>
+          <Link to="/" onClick={cerrarSidebarSiEsMobile}>
+            <img src={iconoInicio} alt="" className="nav-icon" />
+            Inicio
+          </Link>
+          <Link to="/reportes" onClick={cerrarSidebarSiEsMobile}>
+            <img src={iconoReporte} alt="" className="nav-icon" />
+            Reporte
+          </Link>
+          <Link to="/mapa" onClick={cerrarSidebarSiEsMobile}>
+            <img src={iconoMapa} alt="" className="nav-icon" />
+            Mapa
+          </Link>
         </nav>
 
         <div className="sidebar-bottom">
-          {usuario ? (
-            <>
-              <p className="user">{usuario.nombre}</p>
-              <Link to="/crear-reporte" onClick={cerrarSidebarSiEsMobile}>
-                <button>+ Crear reporte</button>
-              </Link>
-              <button onClick={handleLogout} style={{ marginTop: "10px" }}>
-                Cerrar sesión
-              </button>
-            </>
-          ) : (
-            <>
-              <p className="user">Invitado</p>
-              <Link to="/login" onClick={cerrarSidebarSiEsMobile}>
-                <button>Iniciar sesión</button>
-              </Link>
-            </>
-          )}
+        
         </div>
       </aside>
     </>

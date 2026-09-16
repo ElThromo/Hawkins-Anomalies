@@ -1,16 +1,20 @@
+/* ===== BASE = MOBILE ===== */
+
 .page-content {
     min-height: 100vh;
     background: #000000;
     color: white;
     padding: 20px;
-    padding-top: 80px;
+    padding-top: calc(var(--navbar-height) + 20px);
     transition: margin-left 0.3s ease;
 }
 
+/* ===== DESKTOP: a partir de 768px ===== */
+
 @media (min-width: 768px) {
     .page-content {
-        padding-top: 40px;
         padding: 40px;
+        padding-top: calc(var(--navbar-height) + 40px);
     }
 
     .page-content.contenido-sidebar-abierta {

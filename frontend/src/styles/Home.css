@@ -8,6 +8,7 @@ header h1 {
     color: #c1121f;
     font-family: "Elms Sans", sans-serif;
     font-size: 1.8rem;
+    text-align: center;
 }
 
 .cards {
@@ -80,7 +81,7 @@ header h1 {
     }
 
     header h1 {
-        font-size: 2.5rem;
+        font-size: 3rem;
     }
 
     .cards {

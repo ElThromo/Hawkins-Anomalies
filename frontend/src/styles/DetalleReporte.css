@@ -58,7 +58,7 @@
 }
 
 .tag {
-    background: #232323;
+    background: #000000;
     border: 1px solid #550000;
     color: #ddd;
     padding: 6px 14px;
@@ -67,7 +67,7 @@
 }
 
 .tag-zona {
-    border-color: #c1121f;
+    border-color: #550000;
 }
 
 .detalle-cuerpo {
