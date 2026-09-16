@@ -36,6 +36,7 @@ model Zona {
   descripcion  String
   nivelPeligro String
   reportes     Reporte[]
+  vigilantes   Vigilante[]
 }
 
 model Categoria {
@@ -87,4 +88,12 @@ model Comentario {
 
   usuario      Usuario  @relation(fields: [idUsuario], references: [idUsuario])
   reporte      Reporte  @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
+}
+
+model Vigilante {
+  idVigilante Int    @id @default(autoincrement())
+  nombre      String
+
+  idZona      Int
+  zona        Zona   @relation(fields: [idZona], references: [idZona])
 }
