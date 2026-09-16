@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 
@@ -7,6 +8,7 @@ const zonaRoutes = require("./zona/zona.routes");
 const categoriaRoutes = require("./categoria/categoria.routes");
 const usuarioRoutes = require("./usuario/usuario.routes");
 const reporteRoutes = require("./reporte/reporte.routes");
+const comentarioRoutes = require("./comentario/comentario.routes");
 
 const app = express();
 
@@ -17,6 +19,7 @@ app.use("/auth", authRoutes);
 
 app.use("/zonas", zonaRoutes);
 app.use("/categorias", categoriaRoutes);
+app.use("/comentarios", comentarioRoutes);
 app.use("/usuarios", usuarioRoutes);
 app.use("/reportes", reporteRoutes);
 

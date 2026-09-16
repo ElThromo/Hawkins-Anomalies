@@ -21,6 +21,7 @@ model Usuario {
   activo          Boolean  @default(true)
   fechaCreado     DateTime @default(now())
   reportes        Reporte[]
+  comentarios     Comentario[]
 }
 
 enum Rol {
@@ -60,6 +61,7 @@ model Reporte {
   categoria    Categoria     @relation(fields: [idCategoria], references: [idCategoria])
 
   imagenes     ImagenReporte[]
+  comentarios     Comentario[]
 }
 
 enum EstadoReporte {
@@ -73,4 +75,16 @@ model ImagenReporte {
   url        String
   idReporte  Int
   reporte    Reporte @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
+}
+
+model Comentario {
+  idComentario Int      @id @default(autoincrement())
+  texto        String   @db.Text
+  fechaHora    DateTime @default(now())
+
+  idUsuario    Int
+  idReporte    Int
+
+  usuario      Usuario  @relation(fields: [idUsuario], references: [idUsuario])
+  reporte      Reporte  @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
 }
