@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar/Sidebar";
 import { useAuth } from "../context/useAuth";
 import "../styles/Home.css";
 import "../styles/CrearReporte.css";
+import Layout from "../components/Layout/Layout";
 
 interface Zona {
   idZona: number;
@@ -91,9 +91,7 @@ function CrearReporte() {
 
   return (
     <>
-      <Sidebar />
-
-      <main className="home">
+      <Layout>
         <header>
           <h1>Crear reporte</h1>
         </header>
@@ -151,7 +149,7 @@ function CrearReporte() {
             {enviando ? "Enviando..." : "Publicar reporte"}
           </button>
         </form>
-      </main>
+      </Layout>
     </>
   );
 }

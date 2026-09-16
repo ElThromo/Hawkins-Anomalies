@@ -1,131 +1,129 @@
-.sidebar{
+/* mobile */
 
-    width:260px;
-
-    height:100vh;
-
-    background:#121212;
-
-    border-right:1px solid #2c2c2c;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:space-between;
-
-    position:fixed;
-
-    left:0;
-
-    top:0;
-
+.sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: #c1121f;
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
 }
 
-.logo{
-
-    color:#c1121f;
-
-    font-size:2.5rem;
-
-    text-align:center;
-
-    margin-top:40px;
-
-    font-weight:800;
-
-    font-family:"Elms Sans",sans-serif;
-
-    animation: glow 3s infinite alternate
-
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999;
 }
 
-.sidebar nav{
-
-    display:flex;
-
-    flex-direction:column;
-
-    margin-top:60px;
-
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: #121212;
+    border-right: 1px solid #2c2c2c;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
 }
 
-.sidebar nav a{
-
-    color:white;
-
-    text-decoration:none;
-
-    padding:18px 35px;
-
-    transition:.2s;
-
+.sidebar-abierta {
+    transform: translateX(0);
 }
 
-.sidebar nav a:hover{
-
-    background:#202020;
-
-    color:#e63946;
-
+.sidebar-cerrada {
+    transform: translateX(-100%);
 }
 
-.sidebar-bottom{
-
-    padding:30px;
-
+.logo {
+    color: #c1121f;
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 70px;
+    font-weight: 800;
+    font-family: "Elms Sans", sans-serif;
+    animation: glow 3s infinite alternate;
 }
 
-.user{
-
-    color:white;
-
-    margin-bottom:20px;
-
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
 }
 
-.sidebar button{
-
-    width:100%;
-
-    padding:12px;
-
-    background:#c1121f;
-
-    border:none;
-
-    color:white;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    transition:.2s;
-
+.sidebar nav a {
+    color: white;
+    text-decoration: none;
+    padding: 18px 35px;
+    transition: .2s;
 }
 
-.sidebar button:hover{
-
-    background:#e63946;
-
+.sidebar nav a:hover {
+    background: #202020;
+    color: #e63946;
 }
 
-/* Prueba de animacion para logo en sidebar*/
-@keyframes glow{
+.sidebar-bottom {
+    padding: 30px;
+}
 
-    from{
+.user {
+    color: white;
+    margin-bottom: 20px;
+}
 
-        text-shadow:
-            0 0 5px #730e0e;
+.sidebar button {
+    width: 100%;
+    padding: 12px;
+    background: #c1121f;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .2s;
+}
 
+.sidebar button:hover {
+    background: #e63946;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 5px #730e0e; }
+    to { text-shadow: 0 0 10px #730e0e, 0 0 20px #730e0e; }
+}
+
+/* desktop */
+
+@media (min-width: 768px) {
+    .sidebar-overlay {
+        display: none;
     }
 
-    to{
-
-        text-shadow:
-            0 0 10px #730e0e,
-            0 0 20px #730e0e;
-
+    .logo {
+        font-size: 2.5rem;
+        margin-top: 80px;
     }
 
+    .sidebar nav {
+        margin-top: 60px;
+    }
 }

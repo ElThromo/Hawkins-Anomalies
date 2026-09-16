@@ -1,13 +1,11 @@
-import Sidebar from "../components/Sidebar/Sidebar";
+import Layout from "../components/Layout/Layout";
 
 import "../App.css";
 
 function Reportes(){
     return (
         <>
-            <Sidebar />
-
-            <main className="home">
+            <Layout>
 
                 <header>
                     <h1>Reportes</h1>
@@ -28,7 +26,7 @@ function Reportes(){
 
                 </section>
 
-            </main>
+            </Layout>
         </>
     );
 }

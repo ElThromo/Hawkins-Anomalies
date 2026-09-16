@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
-import CrearReporte from "./pages/CrearReporte";
-
+import { SidebarProvider } from "./context/SidebarProvider";
 
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -9,21 +8,24 @@ import Reportes from "./pages/Reportes";
 import Mapa from "./pages/Mapa";
 import Register from "./pages/Register";
 import Zonas from "./pages/Zonas";
+import CrearReporte from "./pages/CrearReporte";
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reportes" element={<Reportes />} />
-          <Route path="/mapa" element={<Mapa />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/zonas" element={<Zonas />} />
-          <Route path="/crear-reporte" element={<CrearReporte />} />
-        </Routes>
-      </BrowserRouter>
+      <SidebarProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/reportes" element={<Reportes />} />
+            <Route path="/mapa" element={<Mapa />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/zonas" element={<Zonas />} />
+            <Route path="/crear-reporte" element={<CrearReporte />} />
+          </Routes>
+        </BrowserRouter>
+      </SidebarProvider>
     </AuthProvider>
   );
 }

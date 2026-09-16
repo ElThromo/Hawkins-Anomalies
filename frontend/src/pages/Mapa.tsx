@@ -1,12 +1,10 @@
-import Sidebar from "../components/Sidebar/Sidebar";
+import Layout from "../components/Layout/Layout";
 import "../styles/Home.css";
 
 function Mapa() {
     return (
         <>
-            <Sidebar />
-
-            <main className="home">
+            <Layout>
 
                 <header>
                     <h1>Mapa</h1>
@@ -30,7 +28,7 @@ function Mapa() {
 
                 </section>
 
-            </main>
+            </Layout>
         </>
     );
 }
