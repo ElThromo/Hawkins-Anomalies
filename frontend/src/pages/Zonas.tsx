@@ -8,10 +8,10 @@ type Zona = {
 };
 
 const nivelesPeligro = [
-  { nombre: "Bajo (transitable)", color: "#42c76b" },
-  { nombre: "Medio (precaucion)", color: "#e6c44a" },
-  { nombre: "Alto (evitar)", color: "#f28c45" },
-  { nombre: "Crítico (prohibido)", color: "#e84b5b" },
+  { nombre: "BAJO", color: "#42c76b" },
+  { nombre: "MEDIO", color: "#e6c44a" },
+  { nombre: "ALTO", color: "#f28c45" },
+  { nombre: "CRITICO", color: "#e84b5b" },
 ];
 
 function colorDelNivel(nivel: string) {

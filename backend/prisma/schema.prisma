@@ -34,9 +34,16 @@ model Zona {
   idZona       Int    @id @default(autoincrement())
   nombre       String
   descripcion  String
-  nivelPeligro String
+  nivelPeligro NivelPeligro
   reportes     Reporte[]
   vigilantes   Vigilante[]
+}
+
+enum NivelPeligro {
+  BAJO
+  MEDIO
+  ALTO
+  CRITICO
 }
 
 model Categoria {
