@@ -9,6 +9,7 @@ import Mapa from "./pages/Mapa";
 import Register from "./pages/Register";
 import Zonas from "./pages/Zonas";
 import CrearReporte from "./pages/CrearReporte";
+import DetalleReporte from "./pages/DetalleReportes";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/zonas" element={<Zonas />} />
             <Route path="/crear-reporte" element={<CrearReporte />} />
+            <Route path="/reporte/:id" element={<DetalleReporte />} />
           </Routes>
         </BrowserRouter>
       </SidebarProvider>

@@ -36,6 +36,42 @@ header h1 {
     font-size: 1.2rem;
 }
 
+.card-error {
+    color: #e63946;
+}
+
+.lista-reportes {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lista-reportes li a {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 6px;
+    transition: background .2s;
+}
+
+.lista-reportes li a:hover {
+    background: #1c1c1c;
+}
+
+.reporte-titulo {
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.reporte-sub {
+    color: #999;
+    font-size: 0.8rem;
+}
+
 /* desktop */
 
 @media (min-width: 768px) {
