@@ -22,6 +22,7 @@ model Usuario {
   fechaCreado     DateTime @default(now())
   reportes        Reporte[]
   comentarios     Comentario[]
+  reacciones Reaccion[]
 }
 
 enum Rol {
@@ -71,6 +72,7 @@ model Reporte {
   imagenes     ImagenReporte[]
   comentarios     Comentario[]
   resoluciones Resolucion[]
+  reacciones Reaccion[]
 }
 
 enum EstadoReporte {
@@ -114,4 +116,24 @@ model Resolucion {
   fechaHora        DateTime @default(now())
 
   reporte          Reporte  @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
+}
+
+enum TipoReaccion {
+  ME_GUSTA
+  MIEDO
+  SORPRESA
+  ME_ENCANTA
+}
+
+model Reaccion {
+  idReaccion Int          @id @default(autoincrement())
+  tipo       TipoReaccion
+
+  idUsuario  Int
+  idReporte  Int
+
+  usuario    Usuario       @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade)
+  reporte    Reporte       @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
+
+  @@unique([idUsuario, idReporte])
 }

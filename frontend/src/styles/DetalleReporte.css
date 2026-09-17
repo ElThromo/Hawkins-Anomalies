@@ -91,6 +91,70 @@
     border: 1px solid #333;
 }
 
+.detalle-reacciones {
+    padding: 16px 0;
+}
+
+.detalle-reacciones h2 {
+    color: #c1121f;
+    font-family: "Elms Sans", sans-serif;
+    font-size: 1.3rem;
+    margin: 0 0 12px;
+}
+
+.reacciones-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.reaccion-boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 72px;
+    padding: 9px 14px;
+    border: 1px solid #3a3a3a;
+    border-radius: 22px;
+    background: #171717;
+    color: #ddd;
+    cursor: pointer;
+    transition:
+        border-color 0.2s,
+        background 0.2s,
+        transform 0.2s;
+}
+
+.reaccion-boton:hover {
+    border-color: #c1121f;
+    background: #251113;
+    transform: translateY(-1px);
+}
+
+.reaccion-boton.reaccion-seleccionada {
+    border-color: #e63946;
+    background: #3a1115;
+    color: white;
+}
+
+.reaccion-boton:disabled {
+    cursor: wait;
+    opacity: 0.6;
+    transform: none;
+}
+
+.reaccion-emoji {
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.reaccion-cantidad {
+    min-width: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
 .detalle-comentarios {
     border-top: 1px solid #333;
     padding-top: 20px;

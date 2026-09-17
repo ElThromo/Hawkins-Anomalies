@@ -25,6 +25,30 @@ interface Comentario {
   idReporte: number;
 }
 
+type TipoReaccion =
+  | "ME_GUSTA"
+  | "MIEDO"
+  | "SORPRESA"
+  | "ME_ENCANTA";
+
+interface Reaccion {
+  idReaccion: number;
+  tipo: TipoReaccion;
+  idUsuario: number;
+  idReporte: number;
+}
+
+const TIPOS_REACCION: {
+  tipo: TipoReaccion;
+  emoji: string;
+  nombre: string;
+}[] = [
+  { tipo: "ME_GUSTA", emoji: "👍", nombre: "Me gusta" },
+  { tipo: "MIEDO", emoji: "😨", nombre: "Miedo" },
+  { tipo: "SORPRESA", emoji: "😮", nombre: "Sorpresa" },
+  { tipo: "ME_ENCANTA", emoji: "❤️", nombre: "Me encanta" }
+];
+
 const ESTADO_LABELS: Record<string, string> = {
   NO_VERIFICADO: "No verificado",
   EN_INVESTIGACION: "En investigación",
@@ -41,6 +65,10 @@ function DetalleReporte() {
   const [errorComentarios, setErrorComentarios] = useState("");
   const [idComentarioEditando, setIdComentarioEditando] = useState<number | null>(null);
   const [textoEditado, setTextoEditado] = useState("");
+  const [reacciones, setReacciones] = useState<Reaccion[]>([]);
+  const [cargandoReacciones, setCargandoReacciones] = useState(true);
+  const [errorReacciones, setErrorReacciones] = useState("");
+  const [procesandoReaccion, setProcesandoReaccion] = useState(false);
   const [reporte, setReporte] = useState<Reporte | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -99,6 +127,140 @@ function DetalleReporte() {
       cargarComentarios();
     }
   }, [id]);
+
+useEffect(() => {
+  async function cargarReacciones() {
+    setCargandoReacciones(true);
+    setErrorReacciones("");
+
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3000/reacciones?idReporte=${id}`
+      );
+
+      const datos = await respuesta.json();
+
+      if (!respuesta.ok) {
+        setErrorReacciones(
+          datos.error || "No se pudieron cargar las reacciones"
+        );
+        return;
+      }
+
+      setReacciones(datos);
+    } catch (err) {
+      console.error(err);
+      setErrorReacciones("No se pudo conectar con el servidor");
+    } finally {
+      setCargandoReacciones(false);
+    }
+  }
+
+  if (id) {
+    cargarReacciones();
+  }
+}, [id]);
+
+async function reaccionar(tipo: TipoReaccion) {
+  setErrorReacciones("");
+
+  if (!usuario || !token) {
+    setErrorReacciones("Tenés que iniciar sesión para reaccionar");
+    return;
+  }
+
+  const reaccionActual = reacciones.find(
+    (reaccion) => reaccion.idUsuario === usuario.idUsuario
+  );
+
+  setProcesandoReaccion(true);
+
+  try {
+    if (reaccionActual?.tipo === tipo) {
+      const respuesta = await fetch(
+        `http://localhost:3000/reacciones/${reaccionActual.idReaccion}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const datos = await respuesta.json();
+
+      if (!respuesta.ok) {
+        setErrorReacciones(datos.error || "No se pudo eliminar la reacción");
+        return;
+      }
+
+      setReacciones((anteriores) =>
+        anteriores.filter(
+          (reaccion) => reaccion.idReaccion !== reaccionActual.idReaccion
+        )
+      );
+
+      return;
+    }
+
+    if (reaccionActual) {
+      const respuesta = await fetch(
+        `http://localhost:3000/reacciones/${reaccionActual.idReaccion}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ tipo })
+        }
+      );
+
+      const datos = await respuesta.json();
+
+      if (!respuesta.ok) {
+        setErrorReacciones(datos.error || "No se pudo cambiar la reacción");
+        return;
+      }
+
+      setReacciones((anteriores) =>
+        anteriores.map((reaccion) =>
+          reaccion.idReaccion === reaccionActual.idReaccion
+            ? datos.reaccion
+            : reaccion
+        )
+      );
+
+      return;
+    }
+
+    const respuesta = await fetch("http://localhost:3000/reacciones", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        tipo,
+        idReporte: Number(id)
+      })
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      setErrorReacciones(datos.error || "No se pudo crear la reacción");
+      return;
+    }
+
+    setReacciones((anteriores) => [datos.reaccion, ...anteriores]);
+  } catch (err) {
+    console.error(err);
+    setErrorReacciones("No se pudo conectar con el servidor");
+  } finally {
+    setProcesandoReaccion(false);
+  }
+}
 
 async function crearComentario(e: FormEvent<HTMLFormElement>) {
   e.preventDefault();
@@ -273,6 +435,50 @@ async function eliminarComentario(idComentario: number) {
         </div>
 
         <p className="detalle-cuerpo">{reporte.cuerpo}</p>
+
+        <section className="detalle-reacciones">
+  <h2>Reacciones</h2>
+
+  {cargandoReacciones ? (
+    <p className="detalle-mensaje">Cargando reacciones...</p>
+  ) : (
+    <div className="reacciones-lista">
+      {TIPOS_REACCION.map(({ tipo, emoji, nombre }) => {
+        const cantidad = reacciones.filter(
+          (reaccion) => reaccion.tipo === tipo
+        ).length;
+
+        const seleccionada = reacciones.some(
+          (reaccion) =>
+            reaccion.tipo === tipo &&
+            reaccion.idUsuario === usuario?.idUsuario
+        );
+
+        return (
+          <button
+            type="button"
+            className={`reaccion-boton ${
+              seleccionada ? "reaccion-seleccionada" : ""
+            }`}
+            key={tipo}
+            title={nombre}
+            aria-label={`${nombre}: ${cantidad}`}
+            aria-pressed={seleccionada}
+            disabled={procesandoReaccion}
+            onClick={() => reaccionar(tipo)}
+          >
+            <span className="reaccion-emoji">{emoji}</span>
+            <span className="reaccion-cantidad">{cantidad}</span>
+          </button>
+        );
+      })}
+    </div>
+  )}
+
+  {errorReacciones && (
+    <p className="detalle-mensaje detalle-error">{errorReacciones}</p>
+  )}
+</section>
 
         {reporte.imagenes.length > 0 && (
           <div className="detalle-imagenes">
