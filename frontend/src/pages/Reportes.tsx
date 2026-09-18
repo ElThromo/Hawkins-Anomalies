@@ -9,7 +9,7 @@ function Reportes(){
 
                 <header>
                     <h1>Reportes</h1>
-                    <p>Consulta y administra todos los reportes registrados.</p>
+                    <h2>Consulta y administra todos los reportes registrados.</h2>
                 </header>
 
                 <section className="cards">

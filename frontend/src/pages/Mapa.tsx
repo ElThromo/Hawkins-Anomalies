@@ -8,7 +8,7 @@ function Mapa() {
 
                 <header>
                     <h1>Mapa</h1>
-                    <p>Visualización de anomalías detectadas en Hawkins.</p>
+                    <h2>Visualización de anomalías detectadas en Hawkins.</h2>
                 </header>
 
                 <section className="cards">

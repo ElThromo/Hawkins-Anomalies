@@ -1,6 +1,8 @@
 const express = require("express");
 const zonaController = require("./zona.controller");
 const { validarZona } = require("./zona.validations");
+const { verificarToken } = require("../middlewares/auth.middleware");
+const { verificarRol } = require("../middlewares/rol.middleware");
 
 const router = express.Router();
 
@@ -11,12 +13,12 @@ router.get("/", zonaController.obtenerZonas);
 router.get("/:id", zonaController.obtenerZonaPorId);
 
 // CREATE - crear una zona
-router.post("/", validarZona, zonaController.crearZona);
+router.post("/", verificarToken, verificarRol("ADMIN"), validarZona, zonaController.crearZona);
 
 // UPDATE - actualizar una zona
-router.put("/:id", validarZona, zonaController.actualizarZona);
+router.put("/:id", verificarToken, verificarRol("ADMIN"), validarZona, zonaController.actualizarZona);
 
 // DELETE - eliminar una zona
-router.delete("/:id", zonaController.eliminarZona);
+router.delete("/:id", verificarToken, verificarRol("ADMIN"), zonaController.eliminarZona);
 
 module.exports = router;

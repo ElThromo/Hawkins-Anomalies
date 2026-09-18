@@ -1,0 +1,71 @@
+/* ===== BASE = MOBILE ===== */
+
+.admin-titulo {
+    color: #c1121f;
+    font-family: "Elms Sans", sans-serif;
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.admin-card {
+    background: #121212;
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+    font-family: "Elms Sans", sans-serif;
+    transition: .2s;
+}
+
+.admin-card:hover {
+    border-color: #c1121f;
+    transform: translateY(-3px);
+}
+
+.admin-icono {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.admin-card span {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ===== DESKTOP: a partir de 768px ===== */
+
+@media (min-width: 768px) {
+    .admin-titulo {
+        font-size: 3rem;
+        margin-bottom: 40px;
+    }
+
+    .admin-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .admin-icono {
+        width: 60px;
+        height: 60px;
+    }
+
+    .admin-card span {
+        font-size: 1rem;
+    }
+}
