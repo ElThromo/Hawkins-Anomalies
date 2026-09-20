@@ -2,9 +2,9 @@ import "./Sidebar.css";
 import { Link } from "react-router-dom";
 import { useSidebar } from "../../context/useSidebar";
 
-import iconoInicio from "../../assets/home.png";
-import iconoMapa from "../../assets/mapa.png";
-import iconoReporte from "../../assets/reporte.png";
+import { useAuth } from "../../context/useAuth";
+
+
 
 import { useAuth } from "../../context/useAuth";
 
@@ -12,7 +12,7 @@ function Sidebar() {
   const { usuario } = useAuth();
 
   const { abierta, cerrarSidebar } = useSidebar();
-
+  const { usuario } = useAuth();
   function cerrarSidebarSiEsMobile() {
     if (window.innerWidth < 768) {
       cerrarSidebar();
@@ -28,22 +28,29 @@ function Sidebar() {
 
         <nav>
           <Link to="/" onClick={cerrarSidebarSiEsMobile}>
-            <img src={iconoInicio} alt="" className="nav-icon" />
+            <span className="nav-icon icon-inicio" />
             Inicio
           </Link>
           <Link to="/reportes" onClick={cerrarSidebarSiEsMobile}>
-            <img src={iconoReporte} alt="" className="nav-icon" />
+            <span className="nav-icon icon-reporte" />
             Reporte
           </Link>
           <Link to="/mapa" onClick={cerrarSidebarSiEsMobile}>
-            <img src={iconoMapa} alt="" className="nav-icon" />
+            <span className="nav-icon icon-mapa" />
             Mapa
           </Link>
         {usuario?.rol === "ADMIN" && <Link to="/admin/tipos-reaccion" onClick={cerrarSidebarSiEsMobile}>Tipos de reacción</Link>}
         </nav>
 
         <div className="sidebar-bottom">
-        
+        {usuario?.rol === "ADMIN" && (
+          <div className="sidebar-admin">
+            <Link to="/admin" onClick={cerrarSidebarSiEsMobile} className="sidebar-admin-link">
+              <span className="nav-icon icon-paneladmin" />
+              Admin panel
+            </Link>
+          </div>
+        )}
         </div>
       </aside>
     </>

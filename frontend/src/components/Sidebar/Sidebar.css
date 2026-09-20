@@ -72,15 +72,59 @@
 }
 
 .sidebar-bottom {
-    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+}
+.sidebar-bottom a {
+    color: white;
+    display: flex;
+    gap: 18px; 
+    text-decoration: none;
+    padding: 18px 35px;
+    transition: .2s;
+    font-size: 20px;
+    font-family: "Elms Sans", sans-serif;
+}
+
+.sidebar-bottom a:hover {
+    background: #202020;
+    color: #e63946;
 }
 
 .nav-icon {
     width: 25px;
     height: 25px;
-    object-fit: contain;
+    flex-shrink: 0;
+    background-color: currentColor;
+
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
 }
 
+.icon-inicio {
+    mask-image: url("../../assets/home.png");
+    -webkit-mask-image: url("../../assets/home.png");
+}
+
+.icon-reporte {
+    mask-image: url("../../assets/reporte.png");
+    -webkit-mask-image: url("../../assets/reporte.png");
+}
+
+.icon-mapa {
+    mask-image: url("../../assets/mapa.png");
+    -webkit-mask-image: url("../../assets/mapa.png");
+}
+
+.icon-paneladmin {
+    mask-image: url("../../assets/paneladmin.png");
+    -webkit-mask-image: url("../../assets/paneladmin.png")
+}
 @keyframes glow {
     from { text-shadow: 0 0 5px #730e0e; }
     to { text-shadow: 0 0 10px #730e0e, 0 0 20px #730e0e; }
