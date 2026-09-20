@@ -20,10 +20,10 @@ async function crearReaccion(datos) {
   });
 }
 
-async function actualizarReaccion(id, tipo) {
+async function actualizarReaccion(id, idTipoReaccion) {
   return await prisma.reaccion.update({
     where: { idReaccion: id },
-    data: { tipo }
+    data: { idTipoReaccion }
   });
 }
 

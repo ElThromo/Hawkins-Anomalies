@@ -1,22 +1,10 @@
 
-const TIPOS_REACCION = [
-  "ME_GUSTA",
-  "MIEDO",
-  "SORPRESA",
-  "ME_ENCANTA"
-];
-
-function tipoValido(tipo) {
-  return typeof tipo === "string" && TIPOS_REACCION.includes(tipo);
-}
-
 function validarReaccion(req, res, next) {
-  const { tipo, idReporte } = req.body ?? {};
+  const { idTipoReaccion, idReporte } = req.body ?? {};
 
-  if (!tipoValido(tipo)) {
+  if (!Number.isInteger(idTipoReaccion) || idTipoReaccion <= 0) {
     return res.status(400).json({
-      error:
-        "El tipo debe ser ME_GUSTA, MIEDO, SORPRESA o ME_ENCANTA"
+      error: "idTipoReaccion debe ser un entero positivo"
     });
   }
 
@@ -30,12 +18,11 @@ function validarReaccion(req, res, next) {
 }
 
 function validarActualizacionReaccion(req, res, next) {
-  const { tipo } = req.body ?? {};
+  const { idTipoReaccion } = req.body ?? {};
 
-  if (!tipoValido(tipo)) {
+  if (!Number.isInteger(idTipoReaccion) || idTipoReaccion <= 0) {
     return res.status(400).json({
-      error:
-        "El tipo debe ser ME_GUSTA, MIEDO, SORPRESA o ME_ENCANTA"
+      error: "idTipoReaccion debe ser un entero positivo"
     });
   }
 

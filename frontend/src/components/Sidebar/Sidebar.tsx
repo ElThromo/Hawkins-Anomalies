@@ -6,7 +6,10 @@ import iconoInicio from "../../assets/home.png";
 import iconoMapa from "../../assets/mapa.png";
 import iconoReporte from "../../assets/reporte.png";
 
+import { useAuth } from "../../context/useAuth";
+
 function Sidebar() {
+  const { usuario } = useAuth();
 
   const { abierta, cerrarSidebar } = useSidebar();
 
@@ -36,6 +39,7 @@ function Sidebar() {
             <img src={iconoMapa} alt="" className="nav-icon" />
             Mapa
           </Link>
+        {usuario?.rol === "ADMIN" && <Link to="/admin/tipos-reaccion" onClick={cerrarSidebarSiEsMobile}>Tipos de reacción</Link>}
         </nav>
 
         <div className="sidebar-bottom">

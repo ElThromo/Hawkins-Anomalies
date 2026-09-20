@@ -25,29 +25,18 @@ interface Comentario {
   idReporte: number;
 }
 
-type TipoReaccion =
-  | "ME_GUSTA"
-  | "MIEDO"
-  | "SORPRESA"
-  | "ME_ENCANTA";
+interface TipoReaccion {
+  idTipoReaccion: number;
+  nombre: string;
+  emoji: string;
+}
 
 interface Reaccion {
   idReaccion: number;
-  tipo: TipoReaccion;
+  idTipoReaccion: number;
   idUsuario: number;
   idReporte: number;
 }
-
-const TIPOS_REACCION: {
-  tipo: TipoReaccion;
-  emoji: string;
-  nombre: string;
-}[] = [
-  { tipo: "ME_GUSTA", emoji: "👍", nombre: "Me gusta" },
-  { tipo: "MIEDO", emoji: "😨", nombre: "Miedo" },
-  { tipo: "SORPRESA", emoji: "😮", nombre: "Sorpresa" },
-  { tipo: "ME_ENCANTA", emoji: "❤️", nombre: "Me encanta" }
-];
 
 const ESTADO_LABELS: Record<string, string> = {
   NO_VERIFICADO: "No verificado",
@@ -66,6 +55,7 @@ function DetalleReporte() {
   const [idComentarioEditando, setIdComentarioEditando] = useState<number | null>(null);
   const [textoEditado, setTextoEditado] = useState("");
   const [reacciones, setReacciones] = useState<Reaccion[]>([]);
+  const [tiposReaccion, setTiposReaccion] = useState<TipoReaccion[]>([]);
   const [cargandoReacciones, setCargandoReacciones] = useState(true);
   const [errorReacciones, setErrorReacciones] = useState("");
   const [procesandoReaccion, setProcesandoReaccion] = useState(false);
@@ -146,7 +136,20 @@ useEffect(() => {
         );
         return;
       }
+const respuestaTipos = await fetch(
+  "http://localhost:3000/tipos-reaccion"
+);
 
+const datosTipos = await respuestaTipos.json();
+
+if (!respuestaTipos.ok) {
+  setErrorReacciones(
+    datosTipos.error || "No se pudieron cargar los tipos de reacción"
+  );
+  return;
+}
+
+setTiposReaccion(datosTipos);
       setReacciones(datos);
     } catch (err) {
       console.error(err);
@@ -161,7 +164,7 @@ useEffect(() => {
   }
 }, [id]);
 
-async function reaccionar(tipo: TipoReaccion) {
+async function reaccionar(idTipoReaccion: number) {
   setErrorReacciones("");
 
   if (!usuario || !token) {
@@ -176,7 +179,7 @@ async function reaccionar(tipo: TipoReaccion) {
   setProcesandoReaccion(true);
 
   try {
-    if (reaccionActual?.tipo === tipo) {
+    if (reaccionActual?.idTipoReaccion === idTipoReaccion) {
       const respuesta = await fetch(
         `http://localhost:3000/reacciones/${reaccionActual.idReaccion}`,
         {
@@ -212,7 +215,7 @@ async function reaccionar(tipo: TipoReaccion) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({ tipo })
+          body: JSON.stringify({ idTipoReaccion })
         }
       );
 
@@ -241,7 +244,7 @@ async function reaccionar(tipo: TipoReaccion) {
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
-        tipo,
+        idTipoReaccion,
         idReporte: Number(id)
       })
     });
@@ -443,14 +446,14 @@ async function eliminarComentario(idComentario: number) {
     <p className="detalle-mensaje">Cargando reacciones...</p>
   ) : (
     <div className="reacciones-lista">
-      {TIPOS_REACCION.map(({ tipo, emoji, nombre }) => {
+      {tiposReaccion.map(({ idTipoReaccion, emoji, nombre }) => {
         const cantidad = reacciones.filter(
-          (reaccion) => reaccion.tipo === tipo
+          (reaccion) => reaccion.idTipoReaccion === idTipoReaccion
         ).length;
 
         const seleccionada = reacciones.some(
           (reaccion) =>
-            reaccion.tipo === tipo &&
+            reaccion.idTipoReaccion === idTipoReaccion &&
             reaccion.idUsuario === usuario?.idUsuario
         );
 
@@ -460,12 +463,12 @@ async function eliminarComentario(idComentario: number) {
             className={`reaccion-boton ${
               seleccionada ? "reaccion-seleccionada" : ""
             }`}
-            key={tipo}
+            key={idTipoReaccion}
             title={nombre}
             aria-label={`${nombre}: ${cantidad}`}
             aria-pressed={seleccionada}
             disabled={procesandoReaccion}
-            onClick={() => reaccionar(tipo)}
+            onClick={() => reaccionar(idTipoReaccion)}
           >
             <span className="reaccion-emoji">{emoji}</span>
             <span className="reaccion-cantidad">{cantidad}</span>

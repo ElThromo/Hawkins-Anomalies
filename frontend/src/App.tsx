@@ -11,12 +11,15 @@ import Zonas from "./pages/Zonas";
 import CrearReporte from "./pages/CrearReporte";
 import DetalleReporte from "./pages/DetalleReportes";
 
+import TiposReaccion from "./pages/TiposReaccion";
+
 function App() {
   return (
     <AuthProvider>
       <SidebarProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/admin/tipos-reaccion" element={<TiposReaccion />} />
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/reportes" element={<Reportes />} />
