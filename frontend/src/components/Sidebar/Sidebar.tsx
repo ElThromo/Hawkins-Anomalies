@@ -1,18 +1,13 @@
+
 import "./Sidebar.css";
 import { Link } from "react-router-dom";
 import { useSidebar } from "../../context/useSidebar";
 
 import { useAuth } from "../../context/useAuth";
 
-
-
-import { useAuth } from "../../context/useAuth";
-
 function Sidebar() {
   const { usuario } = useAuth();
-
   const { abierta, cerrarSidebar } = useSidebar();
-  const { usuario } = useAuth();
   function cerrarSidebarSiEsMobile() {
     if (window.innerWidth < 768) {
       cerrarSidebar();
@@ -39,7 +34,6 @@ function Sidebar() {
             <span className="nav-icon icon-mapa" />
             Mapa
           </Link>
-        {usuario?.rol === "ADMIN" && <Link to="/admin/tipos-reaccion" onClick={cerrarSidebarSiEsMobile}>Tipos de reacción</Link>}
         </nav>
 
         <div className="sidebar-bottom">

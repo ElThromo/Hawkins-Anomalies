@@ -1,10 +1,15 @@
+
 const express = require("express");
 const usuarioController = require("./usuario.controller");
-const { validarUsuario, validarActualizacionUsuario } = require("./usuario.validations");
-const { verificarToken } = require("../middlewares/auth.middleware");
+const {
+  validarUsuario,
+  validarActualizacionUsuario
+} = require("./usuario.validations");
+const {
+  verificarToken,
+  verificarAdmin
+} = require("../middlewares/auth.middleware");
 const { verificarRol } = require("../middlewares/rol.middleware");
-
-const { verificarToken, verificarAdmin } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
