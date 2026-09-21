@@ -1,3 +1,4 @@
+
 /* mobile */
 
 .detalle-mensaje {
@@ -210,11 +211,14 @@
 }
 
 .comentario-card {
-    margin-top: 12px;
-    padding: 16px;
-    border: 1px solid #333;
-    border-radius: 10px;
-    background: #121212;
+    margin-top: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .comentario-card p {
@@ -226,7 +230,7 @@
 .comentario-meta {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    align-items: center;
     gap: 8px;
     color: #999;
     font-size: 0.8rem;
@@ -301,4 +305,165 @@
     .detalle-imagenes {
         grid-template-columns: 1fr 1fr;
     }
+}
+.comentario-avatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #8b0000;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.comentario-contenido {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.comentario-contenido {
+    position: relative;
+    padding-right: 44px;
+}
+
+.comentario-menu {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.comentario-menu summary {
+    list-style: none;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 24px;
+}
+
+.comentario-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.comentario-menu summary:hover {
+    background: #252525;
+}
+
+.comentario-menu summary:focus-visible {
+    outline: 2px solid #e63946;
+}
+
+.comentario-menu-opciones {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    z-index: 10;
+    min-width: 140px;
+    padding: 6px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #252525;
+    box-shadow: 0 6px 18px #0008;
+}
+
+.comentario-menu-opciones button {
+    display: block;
+    width: 100%;
+    background: transparent;
+    text-align: left;
+    padding: 10px 14px;
+}
+
+.comentario-menu-opciones button:hover {
+    background: #393939;
+}
+
+.catalogo-reacciones {
+    margin-top: 12px;
+    padding: 16px;
+    border: 1px solid #444;
+    border-radius: 12px;
+    background: #202020;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.catalogo-reacciones > p {
+    margin-bottom: 12px;
+    color: #ccc;
+}
+
+.catalogo-reacciones .reacciones-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 8px;
+}
+
+.catalogo-reacciones .reaccion-boton {
+    min-width: 0;
+    justify-content: center;
+}
+
+.reaccion-boton.reaccion-agregar {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    align-self: center;
+    font-size: 28px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.comentario-responder {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 18px;
+    background: transparent;
+    color: #ddd;
+    font-weight: 600;
+}
+
+.comentario-responder:hover {
+    background: #252525;
+}
+
+.comentario-responder:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
+.comentario-contenido .comentario-form {
+    margin-top: 12px;
+}
+
+.comentario-respuestas {
+    margin-top: 12px;
+}
+
+.comentario-respuestas > summary {
+    cursor: pointer;
+    color: #e63946;
+    font-weight: 600;
+    padding: 8px 0;
+}
+
+.comentario-respuestas > summary:focus-visible {
+    outline: 2px solid #e63946;
+    outline-offset: 3px;
+}
+
+.comentario-respuestas > .comentario-card {
+    border-left: 1px solid #333;
+    padding-left: 12px;
 }

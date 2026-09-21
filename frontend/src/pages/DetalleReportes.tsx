@@ -1,5 +1,5 @@
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import { useAuth } from "../context/useAuth";
@@ -23,6 +23,11 @@ interface Comentario {
   fechaHora: string;
   idUsuario: number;
   idReporte: number;
+  idComentarioPadre: number | null;
+  usuario: {
+    idUsuario: number;
+    nombre: string;
+  };
 }
 
 interface TipoReaccion {
@@ -62,6 +67,14 @@ function DetalleReporte() {
   const [reporte, setReporte] = useState<Reporte | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [selectorReaccionesAbierto, setSelectorReaccionesAbierto] =
+  useState(false);
+const [idComentarioRespondiendo, setIdComentarioRespondiendo] =
+  useState<number | null>(null);
+
+const [textoRespuesta, setTextoRespuesta] = useState("");
+
+const [enviandoRespuesta, setEnviandoRespuesta] = useState(false);
 
   useEffect(() => {
     async function cargarReporte() {
@@ -265,6 +278,59 @@ async function reaccionar(idTipoReaccion: number) {
   }
 }
 
+async function enviarRespuesta(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+
+  if (enviandoRespuesta || idComentarioRespondiendo === null) {
+    return;
+  }
+
+  setErrorComentarios("");
+
+  if (!usuario || !token) {
+    setErrorComentarios("Tenés que iniciar sesión para responder");
+    return;
+  }
+
+  if (!textoRespuesta.trim()) {
+    setErrorComentarios("La respuesta no puede estar vacía");
+    return;
+  }
+
+  setEnviandoRespuesta(true);
+
+  try {
+    const respuesta = await fetch("http://localhost:3000/comentarios", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        texto: textoRespuesta.trim(),
+        idReporte: Number(id),
+        idComentarioPadre: idComentarioRespondiendo
+      })
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      setErrorComentarios(datos.error || "No se pudo enviar la respuesta");
+      return;
+    }
+
+    setComentarios((anteriores) => [...anteriores, datos.comentario]);
+    setTextoRespuesta("");
+    setIdComentarioRespondiendo(null);
+  } catch (err) {
+    console.error(err);
+    setErrorComentarios("No se pudo conectar con el servidor");
+  } finally {
+    setEnviandoRespuesta(false);
+  }
+}
+
 async function crearComentario(e: FormEvent<HTMLFormElement>) {
   e.preventDefault();
   setErrorComentarios("");
@@ -362,9 +428,9 @@ async function guardarEdicion(idComentario: number) {
 async function eliminarComentario(idComentario: number) {
   if (!token) return;
 
-  const confirmar = window.confirm(
-    "¿Seguro que querés eliminar este comentario?"
-  );
+const confirmar = window.confirm(
+  "¿Seguro que querés eliminar este comentario? También se eliminarán todas sus respuestas."
+);
 
   if (!confirmar) return;
 
@@ -386,16 +452,181 @@ async function eliminarComentario(idComentario: number) {
       return;
     }
 
-    setComentarios((anteriores) =>
-      anteriores.filter(
-        (comentario) => comentario.idComentario !== idComentario
-      )
-    );
+setComentarios((anteriores) => {
+  const idsEliminados = new Set<number>([idComentario]);
+
+  let hayCambios = true;
+
+  while (hayCambios) {
+    hayCambios = false;
+
+    for (const comentario of anteriores) {
+      if (
+        comentario.idComentarioPadre !== null &&
+        idsEliminados.has(comentario.idComentarioPadre) &&
+        !idsEliminados.has(comentario.idComentario)
+      ) {
+        idsEliminados.add(comentario.idComentario);
+        hayCambios = true;
+      }
+    }
+  }
+
+  return anteriores.filter(
+    (comentario) => !idsEliminados.has(comentario.idComentario)
+  );
+});
+
+setIdComentarioRespondiendo(null);
+setTextoRespuesta("");
+setIdComentarioEditando(null);
+setTextoEditado("");
+setErrorComentarios("");
   } catch (err) {
     console.error(err);
     setErrorComentarios("No se pudo conectar con el servidor");
   }
 }
+
+  function renderizarComentario(comentario: Comentario): ReactNode {
+    const respuestas = comentarios
+      .filter(respuesta => respuesta.idComentarioPadre === comentario.idComentario)
+      .sort((a, b) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
+    return (
+      <article className="comentario-card" key={comentario.idComentario}>
+        <div className="comentario-avatar" aria-hidden="true">
+  {comentario.usuario.nombre.charAt(0).toUpperCase()}
+</div>
+
+<div className="comentario-contenido">
+        <div className="comentario-meta">
+         <strong>{comentario.usuario.nombre}</strong>
+          <span>
+            {new Date(comentario.fechaHora).toLocaleString("es-AR")}
+          </span>
+        </div>
+
+        {idComentarioEditando === comentario.idComentario ? (
+  <div className="comentario-edicion">
+    <textarea
+      value={textoEditado}
+      onChange={(e) => setTextoEditado(e.target.value)}
+      rows={3}
+    />
+
+    <div className="comentario-acciones">
+      <button
+        type="button"
+        onClick={() => guardarEdicion(comentario.idComentario)}
+      >
+        Guardar
+      </button>
+
+      <button type="button" onClick={cancelarEdicion}>
+        Cancelar
+      </button>
+    </div>
+  </div>
+) : (
+  <>
+    <p>{comentario.texto}</p>
+
+{usuario && (
+  <button
+    type="button"
+    className="comentario-responder"
+    disabled={enviandoRespuesta}
+    onClick={() => {
+      setIdComentarioRespondiendo(comentario.idComentario);
+      setTextoRespuesta("");
+      setErrorComentarios("");
+    }}
+  >
+    Responder
+  </button>
+)}
+
+{usuario && idComentarioRespondiendo === comentario.idComentario && (
+  <form className="comentario-form" onSubmit={enviarRespuesta}>
+    <label htmlFor={`respuesta-${comentario.idComentario}`}>
+      Responder a {comentario.usuario.nombre}
+    </label>
+
+    <textarea
+      id={`respuesta-${comentario.idComentario}`}
+      value={textoRespuesta}
+      onChange={(e) => setTextoRespuesta(e.target.value)}
+      placeholder="Escribí tu respuesta..."
+      rows={2}
+      required
+      disabled={enviandoRespuesta}
+    />
+
+    <div className="comentario-acciones">
+      <button
+        type="submit"
+        disabled={enviandoRespuesta || !textoRespuesta.trim()}
+      >
+        {enviandoRespuesta ? "Enviando..." : "Enviar respuesta"}
+      </button>
+
+      <button
+        type="button"
+        disabled={enviandoRespuesta}
+        onClick={() => {
+          setIdComentarioRespondiendo(null);
+          setTextoRespuesta("");
+        }}
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+)}
+
+{usuario?.idUsuario === comentario.idUsuario && (
+  <details className="comentario-menu">
+    <summary aria-label="Opciones del comentario">⋯</summary>
+
+    <div className="comentario-menu-opciones">
+      <button
+        type="button"
+        onClick={(e) => {
+          e.currentTarget.closest("details")?.removeAttribute("open");
+          iniciarEdicion(comentario);
+        }}
+      >
+        Editar
+      </button>
+
+      <button
+        type="button"
+        onClick={(e) => {
+          e.currentTarget.closest("details")?.removeAttribute("open");
+          eliminarComentario(comentario.idComentario);
+        }}
+      >
+        Eliminar
+      </button>
+    </div>
+  </details>
+)}
+  </>
+
+)}
+          {respuestas.length > 0 && (
+            <details className="comentario-respuestas">
+              <summary>
+                {respuestas.length}{" "}
+                {respuestas.length === 1 ? "respuesta" : "respuestas"}
+              </summary>
+              {respuestas.map(renderizarComentario)}
+            </details>
+          )}
+        </div>
+      </article>
+    );
+  }
 
   if (cargando) {
     return (
@@ -446,7 +677,15 @@ async function eliminarComentario(idComentario: number) {
     <p className="detalle-mensaje">Cargando reacciones...</p>
   ) : (
     <div className="reacciones-lista">
-      {tiposReaccion.map(({ idTipoReaccion, emoji, nombre }) => {
+      {tiposReaccion
+  .filter((tipo) =>
+    reacciones.some(
+      (reaccion) =>
+        reaccion.idUsuario === usuario?.idUsuario &&
+        reaccion.idTipoReaccion === tipo.idTipoReaccion
+    )
+  )
+  .map(({ idTipoReaccion, emoji, nombre }) => {
         const cantidad = reacciones.filter(
           (reaccion) => reaccion.idTipoReaccion === idTipoReaccion
         ).length;
@@ -475,8 +714,52 @@ async function eliminarComentario(idComentario: number) {
           </button>
         );
       })}
+      <button
+  type="button"
+  className="reaccion-boton reaccion-agregar"
+  aria-label="Ver todas las reacciones"
+  aria-expanded={selectorReaccionesAbierto}
+  aria-controls="catalogo-reacciones"
+  onClick={() => setSelectorReaccionesAbierto((abierto) => !abierto)}
+>
+  +
+</button>
     </div>
   )}
+
+{selectorReaccionesAbierto && (
+  <div id="catalogo-reacciones" className="catalogo-reacciones">
+    <p>Elegí una reacción</p>
+
+    <div className="reacciones-lista">
+      {tiposReaccion.map(({ idTipoReaccion, emoji, nombre }) => (
+        <button
+          key={idTipoReaccion}
+          type="button"
+          className="reaccion-boton"
+          title={nombre}
+          aria-label={nombre}
+          aria-pressed={reacciones.some(
+            (reaccion) =>
+              reaccion.idTipoReaccion === idTipoReaccion &&
+              reaccion.idUsuario === usuario?.idUsuario
+          )}
+          disabled={procesandoReaccion}
+          onClick={() => {
+            setSelectorReaccionesAbierto(false);
+            reaccionar(idTipoReaccion);
+          }}
+        >
+          <span className="reaccion-emoji">{emoji}</span>
+        </button>
+      ))}
+    </div>
+
+    {tiposReaccion.length === 0 && (
+      <p>No hay tipos de reacción disponibles.</p>
+    )}
+  </div>
+)}
 
   {errorReacciones && (
     <p className="detalle-mensaje detalle-error">{errorReacciones}</p>
@@ -526,59 +809,9 @@ async function eliminarComentario(idComentario: number) {
       </p>
     )}
 
-  {!cargandoComentarios &&
-    comentarios.map((comentario) => (
-      <article className="comentario-card" key={comentario.idComentario}>
-        <div className="comentario-meta">
-          <strong>Usuario #{comentario.idUsuario}</strong>
-          <span>
-            {new Date(comentario.fechaHora).toLocaleString("es-AR")}
-          </span>
-        </div>
-
-        {idComentarioEditando === comentario.idComentario ? (
-  <div className="comentario-edicion">
-    <textarea
-      value={textoEditado}
-      onChange={(e) => setTextoEditado(e.target.value)}
-      rows={3}
-    />
-
-    <div className="comentario-acciones">
-      <button
-        type="button"
-        onClick={() => guardarEdicion(comentario.idComentario)}
-      >
-        Guardar
-      </button>
-
-      <button type="button" onClick={cancelarEdicion}>
-        Cancelar
-      </button>
-    </div>
-  </div>
-) : (
-  <>
-    <p>{comentario.texto}</p>
-
-    {usuario?.idUsuario === comentario.idUsuario && (
-      <div className="comentario-acciones">
-        <button type="button" onClick={() => iniciarEdicion(comentario)}>
-          Editar
-        </button>
-
-        <button
-          type="button"
-          onClick={() => eliminarComentario(comentario.idComentario)}
-        >
-          Eliminar
-        </button>
-      </div>
-    )}
-  </>
-)}
-      </article>
-    ))}
+  {!cargandoComentarios && comentarios
+    .filter(comentario => comentario.idComentarioPadre === null)
+    .map(renderizarComentario)}
 </section>
       </div>
     </Layout>

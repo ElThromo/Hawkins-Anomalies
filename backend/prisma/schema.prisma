@@ -98,6 +98,11 @@ model Comentario {
 
   usuario      Usuario  @relation(fields: [idUsuario], references: [idUsuario])
   reporte      Reporte  @relation(fields: [idReporte], references: [idReporte], onDelete: Cascade)
+
+  idComentarioPadre Int?
+  comentarioPadre   Comentario?  @relation("RespuestasComentario", fields: [idComentarioPadre], references: [idComentario], onDelete: Cascade, onUpdate: NoAction)
+  respuestas        Comentario[] @relation("RespuestasComentario")
+
 }
 
 model Vigilante {
