@@ -72,7 +72,7 @@ async function crearReaccion(req, res) {
 
     if (error.code === "P2003") {
       return res.status(400).json({
-        error: "El reporte o usuario asociado no existe"
+        error: "El reporte, usuario o tipo de reacción asociado no existe"
       });
     }
 
@@ -95,7 +95,7 @@ async function actualizarReaccion(req, res) {
 
     const reaccion = await reaccionService.actualizarReaccion(
       id,
-      req.body.tipo,
+      req.body.idTipoReaccion,
       req.usuario.idUsuario
     );
 
@@ -115,6 +115,12 @@ async function actualizarReaccion(req, res) {
         error: error.message
       });
     }
+
+if (error.code === "P2003") {
+  return res.status(400).json({
+    error: "El tipo de reacción indicado no existe"
+  });
+}
 
     console.error(error);
     return res.status(500).json({

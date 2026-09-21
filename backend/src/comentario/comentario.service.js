@@ -10,10 +10,33 @@ async function obtenerComentarioPorId(id) {
 }
 
 async function crearComentario(datos, idUsuario) {
+  const idComentarioPadre = datos.idComentarioPadre ?? null;
+
+  if (idComentarioPadre !== null) {
+    const padre = await comentarioRepository.obtenerComentarioPorId(
+      idComentarioPadre
+    );
+
+    if (!padre) {
+      const error = new Error("El comentario al que querés responder no existe");
+      error.status = 404;
+      throw error;
+    }
+
+    if (padre.idReporte !== datos.idReporte) {
+      const error = new Error(
+        "El comentario pertenece a otro reporte"
+      );
+      error.status = 400;
+      throw error;
+    }
+  }
+
   return await comentarioRepository.crearComentario({
     texto: datos.texto.trim(),
     idReporte: datos.idReporte,
-    idUsuario
+    idUsuario,
+    idComentarioPadre
   });
 }
 

@@ -11,7 +11,7 @@ async function obtenerReaccionPorId(id) {
 
 async function crearReaccion(datos, idUsuario) {
   return await reaccionRepository.crearReaccion({
-    tipo: datos.tipo,
+    idTipoReaccion: datos.idTipoReaccion,
     idReporte: datos.idReporte,
     idUsuario
   });
@@ -33,12 +33,12 @@ async function comprobarAutor(id, idUsuario) {
   return reaccion;
 }
 
-async function actualizarReaccion(id, tipo, idUsuario) {
+async function actualizarReaccion(id, idTipoReaccion, idUsuario) {
   const reaccion = await comprobarAutor(id, idUsuario);
 
   if (!reaccion) return null;
 
-  return await reaccionRepository.actualizarReaccion(id, tipo);
+  return await reaccionRepository.actualizarReaccion(id, idTipoReaccion);
 }
 
 async function eliminarReaccion(id, idUsuario) {

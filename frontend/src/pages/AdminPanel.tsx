@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import "../styles/AdminPanel.css";
@@ -14,7 +15,7 @@ const secciones: SeccionAdmin[] = [
   { nombre: "Categorías", ruta: "/admin/categorias", icono: "../src/assets/categorias.png" },
   { nombre: "Vigilantes", ruta: "/admin/vigilantes", icono: "../src/assets/vigilantes.png" },
   { nombre: "Reportes", ruta: "/admin/reportes", icono: "../src/assets/reporte.png" },
-  { nombre: "Reacciones", ruta: "/admin/reacciones", icono: "../src/assets/reacciones.png" }
+  { nombre: "Reacciones", ruta: "/admin/tipos-reaccion", icono: "../src/assets/reacciones.png" }
 ];
 
 function AdminPanel() {

@@ -1,6 +1,6 @@
 
 function validarComentario(req, res, next) {
-  const { texto, idReporte } = req.body ?? {};
+  const { texto, idReporte, idComentarioPadre } = req.body ?? {};
 
   if (typeof texto !== "string" || !texto.trim()) {
     return res.status(400).json({
@@ -13,6 +13,16 @@ function validarComentario(req, res, next) {
       error: "idReporte debe ser un entero positivo"
     });
   }
+
+if (
+  idComentarioPadre !== undefined &&
+  idComentarioPadre !== null &&
+  (!Number.isInteger(idComentarioPadre) || idComentarioPadre <= 0)
+) {
+  return res.status(400).json({
+    error: "idComentarioPadre debe ser un entero positivo"
+  });
+}
 
   next();
 }

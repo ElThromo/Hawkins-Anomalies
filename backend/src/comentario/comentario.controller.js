@@ -58,11 +58,16 @@ async function crearComentario(req, res) {
       comentario
     });
   } catch (error) {
+    if (error.status === 400 || error.status === 404) {
+      return res.status(error.status).json({
+        error: error.message
+      });
+    }
     console.error(error);
 
     if (error.code === "P2003") {
       return res.status(400).json({
-        error: "El reporte o usuario asociado no existe"
+       error: "El reporte, usuario o comentario padre asociado no existe"
       });
     }
 

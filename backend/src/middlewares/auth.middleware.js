@@ -18,4 +18,29 @@ function verificarToken(req, res, next) {
     }
 }
 
-module.exports = { verificarToken };
+async function verificarAdmin(req, res, next) {
+  try {
+    const usuarioRepository = require("../usuario/usuario.repository");
+    const usuario = await usuarioRepository.obtenerUsuarioPorId(
+      req.usuario.idUsuario
+    );
+
+    if (!usuario || !usuario.activo || usuario.rol !== "ADMIN") {
+      return res.status(403).json({
+        error: "Solo un administrador activo puede realizar esta acción"
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "Error al comprobar los permisos"
+    });
+  }
+}
+
+module.exports = {
+  verificarToken,
+  verificarAdmin
+};

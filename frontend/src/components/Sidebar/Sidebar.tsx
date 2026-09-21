@@ -1,15 +1,13 @@
+
 import "./Sidebar.css";
 import { Link } from "react-router-dom";
 import { useSidebar } from "../../context/useSidebar";
 
 import { useAuth } from "../../context/useAuth";
 
-
-
 function Sidebar() {
-
-  const { abierta, cerrarSidebar } = useSidebar();
   const { usuario } = useAuth();
+  const { abierta, cerrarSidebar } = useSidebar();
   function cerrarSidebarSiEsMobile() {
     if (window.innerWidth < 768) {
       cerrarSidebar();
