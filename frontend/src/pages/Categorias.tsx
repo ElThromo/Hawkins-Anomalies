@@ -1,9 +1,9 @@
 import React from "react";
-import Layout from "../components/Layout/Layout"; // <--- Importas el Layout de tu compañero
+import Layout from "../components/Layout/Layout"; 
 
 export const Categorias = () => {
   return (
-    <Layout> {/* <--- ENVOLTORIO INICIAL */}
+    <Layout> {
       
       <div className="header-section">
         <h2>Gestión de Categorías</h2>
@@ -38,7 +38,7 @@ export const Categorias = () => {
         </table>
       </div>
 
-    </Layout> /* <--- ENVOLTORIO FINAL */
+    </Layout> 
   );
 };
 
