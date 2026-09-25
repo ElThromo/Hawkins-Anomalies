@@ -24,7 +24,7 @@ header h2 {
 }
 
 .card {
-    background: #121212;
+    background: #12121281; /* prueba de transparencia */
     border: 1px solid #333;
     border-radius: 10px;
     padding: 20px;

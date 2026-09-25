@@ -44,7 +44,7 @@ function Home() {
   const recientes = reportes.slice(0, 5);
 
   const peligrosos = reportes
-    .filter((r) => r.zona.nivelPeligro === "Crítico (prohibido)") /* DESPUES AJUSTAR EN PRISMA!!!! */
+    .filter((r) => r.zona.nivelPeligro === "CRITICO")
     .slice(0, 5);
 
   return (

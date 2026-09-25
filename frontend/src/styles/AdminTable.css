@@ -1,0 +1,296 @@
+/* base mobile */
+
+.header-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.header-section h2 {
+    color: #c1121f;
+    font-family: "Elms Sans", sans-serif;
+    font-size: 1.5rem;
+}
+
+.crud-tools {
+    margin-bottom: 20px;
+}
+
+.crud-tools input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #2d2d2d;
+    color: white;
+    font-size: 14px;
+}
+
+.admin-mensaje {
+    color: #bdbdbd;
+    padding: 20px 0;
+}
+
+.admin-error {
+    color: #e63946;
+}
+
+.table-container {
+    overflow-x: auto;
+    border: 1px solid #333;
+    border-radius: 10px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+.admin-table th,
+.admin-table td {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #2c2c2c;
+}
+
+.admin-table th {
+    background: #121212;
+    color: #c1121f;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.admin-table tbody tr:hover {
+    background: #161616;
+}
+
+.btn-action {
+    background: transparent;
+    border: 1px solid #555;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-right: 6px;
+    transition: .2s;
+}
+
+.btn-action:hover {
+    border-color: #c1121f;
+    color: #fcfbfb;
+}
+
+.btn-delete:hover {
+    border-color: #e63939;
+    background: #fcfbfb;
+}
+
+.badge-rol {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-usuario {
+    background: #333;
+    color: #ddd;
+}
+
+.badge-admin {
+    background: #7a1414;
+    color: #ffb3b3;
+}
+
+.badge-investigador {
+    background: #1a4d6e;
+    color: #a3d9ff;
+}
+
+.badge-activo {
+    color: #8ee6a3;
+    font-size: 0.8rem;
+}
+
+.badge-inactivo {
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal-box {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-box h3 {
+    color: #c1121f;
+    font-family: "Elms Sans", sans-serif;
+}
+
+.modal-subtitulo {
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: -12px;
+}
+
+.modal-box label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #bdbdbd;
+    font-size: 0.85rem;
+}
+
+.modal-box select {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #2d2d2d;
+    color: white;
+}
+
+.modal-checkbox {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px !important;
+}
+
+.modal-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background: #8b0000;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-primary:hover {
+    background: #b40000;
+}
+
+.btn-secundario {
+    background: transparent;
+    border: 1px solid #555;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secundario:hover {
+    border-color: #777;
+}
+
+/* reportes */
+.crud-tools-fila {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.crud-tools-fila input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.crud-tools-fila select {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #2d2d2d;
+    color: white;
+    font-size: 14px;
+}
+
+.tabla-link {
+    color: white;
+    text-decoration: none;
+}
+
+.tabla-link:hover {
+    color: #e63946;
+    text-decoration: underline;
+}
+
+.badge-estado {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-no_verificado {
+    background: #444;
+    color: #ddd;
+}
+
+.badge-en_investigacion {
+    background: #7a5b00;
+    color: #ffd166;
+}
+
+.badge-verificado {
+    background: #1f5c2e;
+    color: #8ee6a3;
+}
+
+/* zonas */
+.badge-nivel {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* desktop */
+
+@media (min-width: 768px) {
+    .header-section {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-section h2 {
+    font-size: 3rem;
+}
+
+    .crud-tools input {
+        max-width: 320px;
+    }
+}

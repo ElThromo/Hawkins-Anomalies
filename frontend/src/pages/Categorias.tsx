@@ -1,9 +1,9 @@
-import React from "react";
+/* import React from "react"; */
 import Layout from "../components/Layout/Layout"; 
 
 export const Categorias = () => {
   return (
-    <Layout> {
+    <Layout> 
       
       <div className="header-section">
         <h2>Gestión de Categorías</h2>

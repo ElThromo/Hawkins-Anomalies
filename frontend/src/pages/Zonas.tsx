@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import Layout from "../components/Layout/Layout";
+import { useAuth } from "../context/useAuth";
+import "../styles/AdminTable.css";
 
 type Zona = {
   idZona: number;
@@ -7,7 +10,7 @@ type Zona = {
   nivelPeligro: string;
 };
 
-const nivelesPeligro = [
+const NIVELES = [
   { nombre: "BAJO", color: "#42c76b" },
   { nombre: "MEDIO", color: "#e6c44a" },
   { nombre: "ALTO", color: "#f28c45" },
@@ -15,228 +18,250 @@ const nivelesPeligro = [
 ];
 
 function colorDelNivel(nivel: string) {
-  return nivelesPeligro.find((opcion) => opcion.nombre === nivel)?.color ?? "#d1d1d1";
+  return NIVELES.find((n) => n.nombre === nivel)?.color ?? "#d1d1d1";
 }
 
 function Zonas() {
+  const { token } = useAuth();
   const [zonas, setZonas] = useState<Zona[]>([]);
-
-  const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [nivelPeligro, setNivelPeligro] = useState("");
-  const [nivelesAbiertos, setNivelesAbiertos] = useState(false);
-
-  const [idEditando, setIdEditando] = useState<number | null>(null);
-
-  useEffect(() => {
-    cargarZonas();
-  }, []);
+  const [busqueda, setBusqueda] = useState("");
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+  const [zonaEditando, setZonaEditando] = useState<Zona | "nueva" | null>(null);
 
   async function cargarZonas() {
-    const respuesta = await fetch("http://localhost:3000/zonas");
-    const datos = await respuesta.json();
-    setZonas(datos);
-  }
-
-  async function guardarZona() {
-    if (idEditando === null) {
-      await crearZona();
-    } else {
-      await actualizarZona();
+    setCargando(true);
+    try {
+      const respuesta = await fetch("http://localhost:3000/zonas");
+      if (!respuesta.ok) {
+        setError("No se pudieron cargar las zonas");
+        return;
+      }
+      setZonas(await respuesta.json());
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo conectar con el servidor");
+    } finally {
+      setCargando(false);
     }
   }
 
-  async function crearZona() {
-    const respuesta = await fetch("http://localhost:3000/zonas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nombre,
-        descripcion,
-        nivelPeligro,
-      }),
-    });
+  useEffect(() => {
+    let cancelado = false;
 
-    if (!respuesta.ok) {
-      const error = await respuesta.json();
-      alert(error.error);
-      return;
+    async function cargarZonasEfecto() {
+      setCargando(true);
+      try {
+        const respuesta = await fetch("http://localhost:3000/zonas");
+        if (cancelado) return;
+        if (!respuesta.ok) {
+          setError("No se pudieron cargar las zonas");
+          return;
+        }
+        setZonas(await respuesta.json());
+      } catch (err) {
+        if (!cancelado) {
+          console.error(err);
+          setError("No se pudo conectar con el servidor");
+        }
+      } finally {
+        if (!cancelado) setCargando(false);
+      }
     }
 
-    limpiarFormulario();
-    await cargarZonas();
-  }
+    cargarZonasEfecto();
+    return () => {
+      cancelado = true;
+    };
+  }, []);
 
-  async function actualizarZona() {
-    const respuesta = await fetch(
-      `http://localhost:3000/zonas/${idEditando}`,
-      {
-        method: "PUT",
+  async function handleGuardar(datos: { nombre: string; descripcion: string; nivelPeligro: string }) {
+    const esNueva = zonaEditando === "nueva";
+    const url = esNueva
+      ? "http://localhost:3000/zonas"
+      : `http://localhost:3000/zonas/${(zonaEditando as Zona).idZona}`;
+
+    try {
+      const respuesta = await fetch(url, {
+        method: esNueva ? "POST" : "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({
-          nombre,
-          descripcion,
-          nivelPeligro,
-        }),
+        body: JSON.stringify(datos)
+      });
+
+      if (!respuesta.ok) {
+        const err = await respuesta.json();
+        alert(err.error || "Error al guardar la zona");
+        return;
       }
-    );
 
-    if (!respuesta.ok) {
-      const error = await respuesta.json();
-      alert(error.error);
-      return;
+      setZonaEditando(null);
+      cargarZonas();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo conectar con el servidor");
     }
-
-    limpiarFormulario();
-    await cargarZonas();
   }
 
-  function editarZona(zona: Zona) {
-    setIdEditando(zona.idZona);
-    setNombre(zona.nombre);
-    setDescripcion(zona.descripcion);
-    setNivelPeligro(zona.nivelPeligro);
-    setNivelesAbiertos(false);
-  }
+  async function handleEliminar(zona: Zona) {
+    const confirmar = window.confirm(`¿Eliminar la zona "${zona.nombre}"? Esta acción no se puede deshacer.`);
+    if (!confirmar) return;
 
-  async function eliminarZona(idZona: number) {
-    const confirmar = window.confirm(
-      "¿Estás seguro de que querés eliminar esta zona?"
-    );
-
-    if (!confirmar) {
-      return;
-    }
-
-    const respuesta = await fetch(
-      `http://localhost:3000/zonas/${idZona}`,
-      {
+    try {
+      const respuesta = await fetch(`http://localhost:3000/zonas/${zona.idZona}`, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!respuesta.ok) {
+        const err = await respuesta.json();
+        alert(err.error || "Error al eliminar la zona");
+        return;
       }
-    );
 
-    if (!respuesta.ok) {
-      const error = await respuesta.json();
-      alert(error.error);
-      return;
+      cargarZonas();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo conectar con el servidor");
     }
-
-    await cargarZonas();
   }
 
-  function limpiarFormulario() {
-    setNombre("");
-    setDescripcion("");
-    setNivelPeligro("");
-    setNivelesAbiertos(false);
-    setIdEditando(null);
+  const zonasFiltradas = zonas.filter((z) =>
+    z.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  return (
+    <Layout>
+      <div className="header-section">
+        <h2>Gestión de Zonas</h2>
+        <button className="btn-primary" onClick={() => setZonaEditando("nueva")}>
+          + Nueva Zona
+        </button>
+      </div>
+
+      <div className="crud-tools">
+        <input
+          type="text"
+          placeholder="Buscar zona..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
+      </div>
+
+      {cargando && <p className="admin-mensaje">Cargando...</p>}
+      {error && <p className="admin-mensaje admin-error">{error}</p>}
+
+      {!cargando && !error && (
+        <div className="table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Nivel de peligro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {zonasFiltradas.map((zona) => (
+                <tr key={zona.idZona}>
+                  <td>{zona.idZona}</td>
+                  <td>{zona.nombre}</td>
+                  <td>{zona.descripcion}</td>
+                  <td>
+                    <span className="badge-nivel" style={{ color: colorDelNivel(zona.nivelPeligro) }}>
+                      ● {zona.nivelPeligro}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="btn-action" onClick={() => setZonaEditando(zona)}>
+                      Editar
+                    </button>
+                    <button className="btn-action btn-delete" onClick={() => handleEliminar(zona)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {zonasFiltradas.length === 0 && (
+            <p className="admin-mensaje">No se encontraron zonas.</p>
+          )}
+        </div>
+      )}
+
+      {zonaEditando && (
+        <ModalZona
+          zona={zonaEditando === "nueva" ? null : zonaEditando}
+          onCancelar={() => setZonaEditando(null)}
+          onGuardar={handleGuardar}
+        />
+      )}
+    </Layout>
+  );
+}
+
+interface ModalZonaProps {
+  zona: Zona | null;
+  onCancelar: () => void;
+  onGuardar: (datos: { nombre: string; descripcion: string; nivelPeligro: string }) => void;
+}
+
+function ModalZona({ zona, onCancelar, onGuardar }: ModalZonaProps) {
+  const [nombre, setNombre] = useState(zona?.nombre ?? "");
+  const [descripcion, setDescripcion] = useState(zona?.descripcion ?? "");
+  const [nivelPeligro, setNivelPeligro] = useState(zona?.nivelPeligro ?? "BAJO");
+
+  function handleSubmit() {
+    if (!nombre.trim() || !descripcion.trim()) {
+      alert("Completá nombre y descripción");
+      return;
+    }
+    onGuardar({ nombre, descripcion, nivelPeligro });
   }
 
   return (
-    <div className="zonas-page">
-      <h1>Zonas</h1>
+    <div className="modal-overlay" onClick={onCancelar}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+        <h3>{zona ? "Editar zona" : "Nueva zona"}</h3>
 
-      <h2>{idEditando === null ? "Crear zona" : "Editar zona"}</h2>
+        <label>
+          Nombre
+          <input
+            type="text"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+          />
+        </label>
 
-      <div className="zonas-form">
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-        />
+        <label>
+          Descripción
+          <input
+            type="text"
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+          />
+        </label>
 
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-        />
+        <label>
+          Nivel de peligro
+          <select value={nivelPeligro} onChange={(e) => setNivelPeligro(e.target.value)}>
+            {NIVELES.map((n) => (
+              <option key={n.nombre} value={n.nombre}>{n.nombre}</option>
+            ))}
+          </select>
+        </label>
 
-        <div
-          className="nivel-selector"
-          onBlur={(e) => {
-            if (!e.currentTarget.contains(e.relatedTarget)) {
-              setNivelesAbiertos(false);
-            }
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") setNivelesAbiertos(false);
-          }}
-        >
-          <button
-            type="button"
-            className="nivel-toggle"
-            aria-expanded={nivelesAbiertos}
-            onClick={() => setNivelesAbiertos(!nivelesAbiertos)}
-          >
-            <span className="nivel-toggle-contenido">
-              <span
-                className="nivel-indicador"
-                style={{ backgroundColor: nivelPeligro ? colorDelNivel(nivelPeligro) : "#999" }}
-              />
-              <span style={{ color: nivelPeligro ? colorDelNivel(nivelPeligro) : "#999" }}>
-                {nivelPeligro || "Nivel de peligro"}
-              </span>
-            </span>
-            <span aria-hidden="true">▾</span>
-          </button>
-
-          {nivelesAbiertos && (
-            <div className="nivel-opciones" role="group" aria-label="Niveles de peligro">
-              {nivelesPeligro.map((nivel) => (
-                <button
-                  key={nivel.nombre}
-                  type="button"
-                  className="nivel-opcion"
-                  onClick={() => {
-                    setNivelPeligro(nivel.nombre);
-                    setNivelesAbiertos(false);
-                  }}
-                >
-                  <span className="nivel-indicador" style={{ backgroundColor: nivel.color }} />
-                  <span style={{ color: nivel.color }}>{nivel.nombre}</span>
-                </button>
-              ))}
-            </div>
-          )}
+        <div className="modal-acciones">
+          <button className="btn-secundario" onClick={onCancelar}>Cancelar</button>
+          <button className="btn-primary" onClick={handleSubmit}>Guardar</button>
         </div>
-
-        <button onClick={guardarZona}>
-          {idEditando === null ? "Crear zona" : "Guardar cambios"}
-        </button>
-
-        {idEditando !== null && (
-          <button onClick={limpiarFormulario}>Cancelar</button>
-        )}
       </div>
-
-      <h2>Listado de zonas</h2>
-
-      {zonas.map((zona) => (
-        <div className="zona-card" key={zona.idZona}>
-          <h3>{zona.nombre}</h3>
-
-          <p>{zona.descripcion}</p>
-
-          <p>
-            Nivel de peligro: {" "}
-            <span className="nivel-valor" style={{ color: colorDelNivel(zona.nivelPeligro) }}>
-              {zona.nivelPeligro}
-            </span>
-          </p>
-
-          <button onClick={() => editarZona(zona)}>Editar</button>
-
-          <button onClick={() => eliminarZona(zona.idZona)}>
-            Eliminar
-          </button>
-        </div>
-      ))}
     </div>
   );
 }

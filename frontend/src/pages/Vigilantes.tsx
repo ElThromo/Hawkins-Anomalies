@@ -18,7 +18,7 @@ export const Vigilantes = () => {
       </div>
 
       <div className="table-container">
-        <table class="admin-table">
+        <table className="admin-table">
           <thead>
             <tr>
               <th>ID</th>

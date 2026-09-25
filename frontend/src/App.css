@@ -27,7 +27,7 @@ body{
     flex-direction:column;
 
     background:
-    radial-gradient(circle at top,#4a0000 0%,#181818 40%);
+    radial-gradient(circle at top,#4a0000 0%,#000000 40%);
 }
 
 .title{
@@ -59,7 +59,7 @@ h2{
 
     width:360px;
 
-    background:#232323;
+    background:#111111;
 
     border:1px solid #550000;
 
@@ -92,7 +92,7 @@ input{
 
     border-radius:6px;
 
-    background:#2d2d2d;
+    background:#1a1a1a;
 
     color:white;
 
