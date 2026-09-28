@@ -26,10 +26,16 @@ async function eliminarReporte(id) {
     return await reporteRepository.eliminarReporte(id);
 }
 
+async function agregarImagenes(idReporte, archivos) {
+    const urls = archivos.map((archivo) => `/uploads/${archivo.filename}`);
+    return await reporteRepository.agregarImagenes(idReporte, urls);
+}
+
 module.exports = {
     obtenerReportes,
     obtenerReportePorId,
     crearReporte,
     actualizarReporte,
-    eliminarReporte
+    eliminarReporte,
+    agregarImagenes
 };

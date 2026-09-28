@@ -24,6 +24,7 @@ function CrearReporte() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [imagenes, setImagenes] = useState<FileList | null>(null);
 
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -81,12 +82,37 @@ function CrearReporte() {
         return;
       }
 
-      navigate("/reportes");
+      const idReporteCreado = datos.reporte.idReporte;
+
+      if (imagenes && imagenes.length > 0) {
+        const formData = new FormData();
+        Array.from(imagenes).forEach((archivo) => {
+          formData.append("imagenes", archivo);
+        });
+
+        const respuestaImagenes = await fetch(`http://localhost:3000/reportes/${idReporteCreado}/imagenes`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (!respuestaImagenes.ok) {
+          console.error("El reporte se creó pero hubo un error al subir las imágenes");
+        }
+      }
+
+      navigate(`/reporte/${idReporteCreado}`);
     } catch (err) {
       console.error(err);
       setError("No se pudo conectar con el servidor");
       setEnviando(false);
     }
+  }
+
+  function handleImagenesChange(e: React.ChangeEvent<HTMLInputElement>) {
+  setImagenes(e.target.files);
   }
 
   return (
@@ -144,6 +170,16 @@ function CrearReporte() {
               </select>
             </label>
           </div>
+
+          <label>
+            Imágenes (opcional, máximo 5)
+            <input
+              type="file"
+              accept="image/png, image/jpeg, image/webp"
+              multiple
+              onChange={handleImagenesChange}
+            />
+          </label>
 
           <button type="submit" disabled={enviando}>
             {enviando ? "Enviando..." : "Publicar reporte"}

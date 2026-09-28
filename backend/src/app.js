@@ -15,6 +15,8 @@ const resolucionRoutes = require("./resolucion/resolucion.routes");
 const reaccionRoutes = require("./reaccion/reaccion.routes");
 const tipoReaccionRoutes = require("./tipoReaccion/tipoReaccion.routes");
 
+const path = require("path");
+
 const app = express();
 
 app.use(cors());
@@ -31,6 +33,9 @@ app.use("/vigilantes", vigilanteRoutes);
 app.use("/resoluciones", resolucionRoutes);
 app.use("/reacciones", reaccionRoutes);
 app.use("/tipos-reaccion", tipoReaccionRoutes);
+
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 app.listen(3000, () => {
     console.log("Servidor funcionando en puerto 3000");
 });

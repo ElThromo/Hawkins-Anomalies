@@ -38,3 +38,7 @@ coverage
 # Optional backend uploads/temp
 uploads
 temp
+
+# Imagenes
+uploads/*
+!uploads/.gitkeep

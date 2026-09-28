@@ -72,10 +72,48 @@ async function eliminarReporte(req, res) {
     }
 }
 
+async function subirImagenes(req, res) {
+    try {
+        const idReporte = parseInt(req.params.id);
+
+        // Confirmá que el reporte exista
+        const reporte = await reporteService.obtenerReportePorId(idReporte);
+        if (!reporte) {
+            return res.status(404).json({ error: "Reporte no encontrado" });
+        }
+
+        // Solo el autor del reporte (o un admin) puede agregarle imágenes
+        const esAutor = reporte.usuario.idUsuario === req.usuario.idUsuario;
+        const esAdmin = req.usuario.rol === "ADMIN";
+
+        if (!esAutor && !esAdmin) {
+            return res.status(403).json({ error: "No tenés permiso para modificar este reporte" });
+        }
+
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: "No se recibió ninguna imagen" });
+        }
+
+        await reporteService.agregarImagenes(idReporte, req.files);
+
+        const reporteActualizado = await reporteService.obtenerReportePorId(idReporte);
+
+        res.status(201).json({
+            mensaje: "Imágenes subidas correctamente",
+            reporte: reporteActualizado
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al subir las imágenes" });
+    }
+}
+
+
 module.exports = {
     obtenerReportes,
     obtenerReportePorId,
     crearReporte,
     actualizarReporte,
-    eliminarReporte
+    eliminarReporte,
+    subirImagenes
 };

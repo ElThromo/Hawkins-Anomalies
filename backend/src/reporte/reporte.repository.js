@@ -54,10 +54,17 @@ async function eliminarReporte(id) {
     });
 }
 
+async function agregarImagenes(idReporte, urls) {
+    return await prisma.imagenReporte.createMany({
+        data: urls.map((url) => ({ idReporte, url }))
+    });
+}
+
 module.exports = {
     obtenerReportes,
     obtenerReportePorId,
     crearReporte,
     actualizarReporte,
-    eliminarReporte
+    eliminarReporte,
+    agregarImagenes
 };

@@ -769,7 +769,7 @@ setErrorComentarios("");
         {reporte.imagenes.length > 0 && (
           <div className="detalle-imagenes">
             {reporte.imagenes.map((img) => (
-              <img key={img.idImagen} src={img.url} alt={reporte.titulo} />
+              <img key={img.idImagen} src={`http://localhost:3000${img.url}`} alt={reporte.titulo} />
             ))}
           </div>
         )}
