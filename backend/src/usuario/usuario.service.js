@@ -37,10 +37,26 @@ async function eliminarUsuario(id) {
     return await usuarioRepository.eliminarUsuario(id);
 }
 
+async function actualizarPerfilPropio(idUsuario, datos) {
+    const datosActualizados = {};
+
+    if (datos.nombre) {
+        datosActualizados.nombre = datos.nombre;
+    }
+
+    return await usuarioRepository.actualizarUsuario(idUsuario, datosActualizados);
+}
+
+async function actualizarAvatar(idUsuario, rutaArchivo) {
+    return await usuarioRepository.actualizarUsuario(idUsuario, { avatar: rutaArchivo });
+}
+
 module.exports = {
     obtenerUsuarios,
     obtenerUsuarioPorId,
     crearUsuario,
     actualizarUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    actualizarPerfilPropio,
+    actualizarAvatar
 };

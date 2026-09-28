@@ -1,0 +1,82 @@
+/* ===== BASE = MOBILE ===== */
+
+.perfil-box {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.perfil-mensaje-exito {
+    color: #8ee6a3;
+    background: #1f5c2e33;
+    padding: 10px 14px;
+    border-radius: 6px;
+}
+
+.perfil-mensaje-error {
+    color: #e63946;
+    background: #e6394622;
+    padding: 10px 14px;
+    border-radius: 6px;
+}
+
+.perfil-avatar-seccion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.perfil-avatar-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #c1121f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.perfil-avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perfil-avatar-inicial {
+    color: white;
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+.perfil-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.perfil-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #bdbdbd;
+    font-size: 0.9rem;
+}
+
+.perfil-form input {
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #2d2d2d;
+    color: white;
+    font-size: 15px;
+}
+
+
+@media (min-width: 768px) {
+
+}
