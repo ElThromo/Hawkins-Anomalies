@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
@@ -14,12 +15,18 @@ interface Reporte {
   categoria: { nombre: string };
 }
 
-const ESTADOS = ["NO_VERIFICADO", "EN_INVESTIGACION", "VERIFICADO"];
+const ESTADOS = [
+  "NO_VERIFICADO",
+  "EN_INVESTIGACION",
+  "VERIFICADO",
+  "RESUELTO"
+];
 
 const ESTADO_LABELS: Record<string, string> = {
   NO_VERIFICADO: "No verificado",
   EN_INVESTIGACION: "En investigación",
-  VERIFICADO: "Verificado"
+  VERIFICADO: "Verificado",
+  RESUELTO: "Resuelto"
 };
 
 function AdminReportes() {

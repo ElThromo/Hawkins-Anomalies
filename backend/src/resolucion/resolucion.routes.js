@@ -1,23 +1,36 @@
-const express = require("express");
 
+const express = require("express");
 const resolucionController = require("./resolucion.controller");
 const { validarResolucion } = require("./resolucion.validations");
+const { verificarToken } = require("../middlewares/auth.middleware");
+const { verificarRol } = require("../middlewares/rol.middleware");
 
 const router = express.Router();
 
-// READ - obtener todas
 router.get("/", resolucionController.obtenerResoluciones);
-
-// READ - obtener por ID
 router.get("/:id", resolucionController.obtenerResolucionPorId);
 
-// CREATE
-router.post("/", validarResolucion, resolucionController.crearResolucion);
+router.post(
+  "/",
+  verificarToken,
+  verificarRol("ADMIN", "INVESTIGADOR"),
+  validarResolucion,
+  resolucionController.crearResolucion
+);
 
-// UPDATE
-router.put("/:id", validarResolucion, resolucionController.actualizarResolucion);
+router.put(
+  "/:id",
+  verificarToken,
+  verificarRol("ADMIN", "INVESTIGADOR"),
+  validarResolucion,
+  resolucionController.actualizarResolucion
+);
 
-// DELETE
-router.delete("/:id", resolucionController.eliminarResolucion);
+router.delete(
+  "/:id",
+  verificarToken,
+  verificarRol("ADMIN", "INVESTIGADOR"),
+  resolucionController.eliminarResolucion
+);
 
 module.exports = router;

@@ -1,7 +1,8 @@
+
 const resolucionRepository = require("./resolucion.repository");
 
-async function obtenerResoluciones() {
-    return await resolucionRepository.obtenerResoluciones();
+async function obtenerResoluciones(idReporte) {
+    return await resolucionRepository.obtenerResoluciones(idReporte);
 }
 
 async function obtenerResolucionPorId(id) {

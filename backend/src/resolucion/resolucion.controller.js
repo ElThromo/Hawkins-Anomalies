@@ -1,9 +1,27 @@
+
 const resolucionService = require("./resolucion.service");
 
 // OBTENER TODAS
 async function obtenerResoluciones(req, res) {
     try {
-        const resoluciones = await resolucionService.obtenerResoluciones();
+        let idReporte;
+
+        if (req.query.idReporte !== undefined) {
+            idReporte = Number(req.query.idReporte);
+
+            if (
+                typeof req.query.idReporte !== "string" ||
+                !Number.isSafeInteger(idReporte) ||
+                idReporte <= 0
+            ) {
+                return res.status(400).json({
+                    error: "El ID del reporte debe ser un entero positivo"
+                });
+            }
+        }
+
+        const resoluciones =
+            await resolucionService.obtenerResoluciones(idReporte);
 
         res.json(resoluciones);
     } catch (error) {
@@ -43,17 +61,23 @@ async function obtenerResolucionPorId(req, res) {
     }
 }
 
-// CREAR
+// CREAR UNA RESOLUCION
 async function crearResolucion(req, res) {
     try {
         const resolucion =
             await resolucionService.crearResolucion(req.body);
 
         res.status(201).json({
-            mensaje: "Resolución creada",
+            mensaje: "Resolución creada y reporte resuelto",
             resolucion
         });
     } catch (error) {
+        if (error.code === "P2003" || error.code === "P2025") {
+            return res.status(404).json({
+                error: "El reporte asociado no existe"
+            });
+        }
+
         console.error(error);
         res.status(500).json({
             error: "Error al crear la resolución"

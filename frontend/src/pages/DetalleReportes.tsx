@@ -17,6 +17,14 @@ interface Reporte {
   imagenes: { idImagen: number; url: string }[];
 }
 
+interface Resolucion {
+  idResolucion: number;
+  idReporte: number;
+  resolucion: string;
+  cuerpoResolucion: string;
+  fechaHora: string;
+}
+
 interface Comentario {
   idComentario: number;
   texto: string;
@@ -46,12 +54,24 @@ interface Reaccion {
 const ESTADO_LABELS: Record<string, string> = {
   NO_VERIFICADO: "No verificado",
   EN_INVESTIGACION: "En investigación",
-  VERIFICADO: "Verificado"
+  VERIFICADO: "Verificado",
+  RESUELTO: "Resuelto"
 };
 
 function DetalleReporte() {
   const { id } = useParams();
   const { usuario, token } = useAuth();
+
+const [resoluciones, setResoluciones] = useState<Resolucion[]>([]);
+const [cargandoResoluciones, setCargandoResoluciones] = useState(true);
+const [errorResoluciones, setErrorResoluciones] = useState("");
+
+const [tituloResolucion, setTituloResolucion] = useState("");
+const [cuerpoResolucion, setCuerpoResolucion] = useState("");
+const [guardandoResolucion, setGuardandoResolucion] = useState(false);
+
+const puedeGestionarResoluciones =
+  usuario?.rol === "ADMIN" || usuario?.rol === "INVESTIGADOR";
 
   const [comentarios, setComentarios] = useState<Comentario[]>([]);
   const [nuevoComentario, setNuevoComentario] = useState("");
@@ -75,6 +95,53 @@ const [idComentarioRespondiendo, setIdComentarioRespondiendo] =
 const [textoRespuesta, setTextoRespuesta] = useState("");
 
 const [enviandoRespuesta, setEnviandoRespuesta] = useState(false);
+
+useEffect(() => {
+  const controlador = new AbortController();
+
+  async function cargarResoluciones() {
+    setCargandoResoluciones(true);
+    setErrorResoluciones("");
+    setResoluciones([]);
+
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3000/resoluciones?idReporte=${id}`,
+        { signal: controlador.signal }
+      );
+
+      const datos = await respuesta.json();
+
+      if (!respuesta.ok) {
+        throw new Error(
+          datos.error || "No se pudieron cargar las resoluciones"
+        );
+      }
+
+      if (!controlador.signal.aborted) {
+        setResoluciones(datos);
+      }
+    } catch (error) {
+      if (!controlador.signal.aborted) {
+        setErrorResoluciones(
+          error instanceof Error
+            ? error.message
+            : "No se pudo conectar con el servidor"
+        );
+      }
+    } finally {
+      if (!controlador.signal.aborted) {
+        setCargandoResoluciones(false);
+      }
+    }
+  }
+
+  if (id) {
+    cargarResoluciones();
+  }
+
+  return () => controlador.abort();
+}, [id]);
 
   useEffect(() => {
     async function cargarReporte() {
@@ -176,6 +243,73 @@ setTiposReaccion(datosTipos);
     cargarReacciones();
   }
 }, [id]);
+
+async function guardarResolucion(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+
+  if (guardandoResolucion || cargandoResoluciones) return;
+
+  setErrorResoluciones("");
+
+  if (!token || !puedeGestionarResoluciones) {
+    setErrorResoluciones(
+      "Solo administradores e investigadores pueden agregar resoluciones."
+    );
+    return;
+  }
+
+  if (!reporte) return;
+
+  const titulo = tituloResolucion.trim();
+  const cuerpo = cuerpoResolucion.trim();
+
+  if (!titulo || !cuerpo) {
+    setErrorResoluciones("Completá el título y la descripción.");
+    return;
+  }
+
+  setGuardandoResolucion(true);
+
+  try {
+    const respuesta = await fetch("http://localhost:3000/resoluciones", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        idReporte: reporte.idReporte,
+        resolucion: titulo,
+        cuerpoResolucion: cuerpo
+      })
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      setErrorResoluciones(
+        datos.error || "No se pudo guardar la resolución."
+      );
+      return;
+    }
+
+    setResoluciones((anteriores) => [datos.resolucion, ...anteriores]);
+
+    setReporte((actual) =>
+      actual?.idReporte === reporte.idReporte
+        ? { ...actual, estado: "RESUELTO" }
+        : actual
+    );
+
+    setTituloResolucion("");
+    setCuerpoResolucion("");
+  } catch (error) {
+    console.error(error);
+    setErrorResoluciones("No se pudo conectar con el servidor.");
+  } finally {
+    setGuardandoResolucion(false);
+  }
+}
 
 async function reaccionar(idTipoReaccion: number) {
   setErrorReacciones("");
@@ -669,6 +803,93 @@ setErrorComentarios("");
         </div>
 
         <p className="detalle-cuerpo">{reporte.cuerpo}</p>
+
+<section className="detalle-resoluciones">
+  <h2>Resoluciones</h2>
+
+{puedeGestionarResoluciones && (
+  <form
+    className="resolucion-form"
+    onSubmit={guardarResolucion}
+  >
+    <h3>Agregar resolución</h3>
+
+    <label htmlFor="titulo-resolucion">Título</label>
+    <input
+      id="titulo-resolucion"
+      type="text"
+      value={tituloResolucion}
+      onChange={(e) => setTituloResolucion(e.target.value)}
+      maxLength={191}
+      required
+      disabled={guardandoResolucion}
+      placeholder="Ejemplo: Anomalía controlada"
+    />
+
+    <label htmlFor="cuerpo-resolucion">
+      ¿Cómo se resolvió el reporte?
+    </label>
+    <textarea
+      id="cuerpo-resolucion"
+      value={cuerpoResolucion}
+      onChange={(e) => setCuerpoResolucion(e.target.value)}
+      rows={5}
+      required
+      disabled={guardandoResolucion}
+      placeholder="Describí las acciones realizadas y el resultado."
+    />
+
+    <p className="detalle-mensaje">
+      Al guardar, el reporte pasará al estado Resuelto.
+    </p>
+
+    <button
+      type="submit"
+      disabled={guardandoResolucion || cargandoResoluciones}
+    >
+      {guardandoResolucion ? "Guardando..." : "Guardar resolución"}
+    </button>
+  </form>
+)}
+
+  {cargandoResoluciones && (
+    <p className="detalle-mensaje">Cargando resoluciones...</p>
+  )}
+
+  {errorResoluciones && (
+    <p className="detalle-error" role="alert">
+      {errorResoluciones}
+    </p>
+  )}
+
+  {!cargandoResoluciones && !errorResoluciones && (
+    resoluciones.length === 0 ? (
+      <p className="detalle-mensaje">
+        Este reporte todavía no tiene resoluciones.
+      </p>
+    ) : (
+      resoluciones.map((resolucion) => (
+        <article
+          className="resolucion-item"
+          key={resolucion.idResolucion}
+        >
+          <h3>{resolucion.resolucion}</h3>
+
+          <time
+            className="detalle-meta"
+            dateTime={resolucion.fechaHora}
+          >
+            {new Date(resolucion.fechaHora).toLocaleString("es-AR")}
+          </time>
+
+          <p className="detalle-cuerpo">
+            {resolucion.cuerpoResolucion}
+          </p>
+        </article>
+      ))
+    )
+  )}
+</section>
 
         <section className="detalle-reacciones">
   <h2>Reacciones</h2>

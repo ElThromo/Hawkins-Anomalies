@@ -1,8 +1,15 @@
+
 const prisma = require("../prisma");
 
 // OBTENER TODAS LAS RESOLUCIONES
-async function obtenerResoluciones() {
-    return await prisma.resolucion.findMany();
+async function obtenerResoluciones(idReporte) {
+    return await prisma.resolucion.findMany({
+        where: idReporte === undefined ? {} : { idReporte },
+        orderBy: [
+            { fechaHora: "desc" },
+            { idResolucion: "desc" }
+        ]
+    });
 }
 
 // OBTENER UNA RESOLUCIÓN POR ID
@@ -14,8 +21,21 @@ async function obtenerResolucionPorId(id) {
 
 // CREAR UNA RESOLUCIÓN
 async function crearResolucion(datos) {
-    return await prisma.resolucion.create({
-        data: datos
+    return await prisma.$transaction(async (tx) => {
+        const resolucion = await tx.resolucion.create({
+            data: {
+                idReporte: datos.idReporte,
+                resolucion: datos.resolucion.trim(),
+                cuerpoResolucion: datos.cuerpoResolucion.trim()
+            }
+        });
+
+        await tx.reporte.update({
+            where: { idReporte: datos.idReporte },
+            data: { estado: "RESUELTO" }
+        });
+
+        return resolucion;
     });
 }
 
