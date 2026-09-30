@@ -22,7 +22,8 @@ model Usuario {
   fechaCreado     DateTime @default(now())
   reportes        Reporte[]
   comentarios     Comentario[]
-  reacciones Reaccion[]
+  avatar          String?
+  reacciones      Reaccion[]
 }
 
 enum Rol {

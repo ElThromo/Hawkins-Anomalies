@@ -17,6 +17,7 @@ import Register from "./pages/Register";
 import Zonas from "./pages/Zonas";
 import CrearReporte from "./pages/CrearReporte";
 import DetalleReporte from "./pages/DetalleReportes";
+import EditarPerfil from "./pages/EditarPerfil";
 
 
 import TiposReaccion from "./pages/TiposReaccion";
@@ -34,7 +35,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/admin/zonas" element={<Zonas />} />
             <Route path="/crear-reporte" element={<CrearReporte />} />
-            <Route path="/reporte/:id" element={<DetalleReporte />} />            
+            <Route path="/reporte/:id" element={<DetalleReporte />} />   
+            <Route path="/perfil" element={<EditarPerfil />} />      
             
             /* links protegidos, solo pueden verlos un admin y los usuarios son redirigidos a la home */
 

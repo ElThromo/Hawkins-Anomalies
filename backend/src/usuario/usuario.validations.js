@@ -50,7 +50,20 @@ function validarActualizacionUsuario(req, res, next) {
     next();
 }
 
+function validarEdicionPerfil(req, res, next) {
+    const { nombre } = req.body;
+
+    if (nombre !== undefined) {
+        if (typeof nombre !== "string" || nombre.trim().length === 0) {
+            return res.status(400).json({ error: "El nombre no puede estar vacío" });
+        }
+    }
+
+    next();
+}
+
 module.exports = {
     validarUsuario,
-    validarActualizacionUsuario
+    validarActualizacionUsuario,
+    validarEdicionPerfil
 };

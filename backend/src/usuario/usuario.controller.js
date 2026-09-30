@@ -78,10 +78,50 @@ async function eliminarUsuario(req, res) {
     }
 }
 
+async function actualizarPerfilPropio(req, res) {
+    try {
+        const usuario = await usuarioService.actualizarPerfilPropio(req.usuario.idUsuario, req.body);
+
+        res.json({
+            mensaje: "Perfil actualizado",
+            usuario
+        });
+    } catch (error) {
+        console.error(error);
+
+        if (error.code === "P2002") {
+            return res.status(409).json({ error: "Ese nombre de usuario ya está en uso" });
+        }
+
+        res.status(500).json({ error: "Error al actualizar el perfil" });
+    }
+}
+
+async function subirAvatar(req, res) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No se recibió ninguna imagen" });
+        }
+
+        const rutaArchivo = `/uploads/avatars/${req.file.filename}`;
+        const usuario = await usuarioService.actualizarAvatar(req.usuario.idUsuario, rutaArchivo);
+
+        res.json({
+            mensaje: "Avatar actualizado",
+            usuario
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al subir el avatar" });
+    }
+}
+
 module.exports = {
     obtenerUsuarios,
     obtenerUsuarioPorId,
     crearUsuario,
     actualizarUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    actualizarPerfilPropio,
+    subirAvatar
 };

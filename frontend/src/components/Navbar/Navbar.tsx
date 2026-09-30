@@ -36,7 +36,12 @@ function Navbar() {
         </button>
 
         {/* El logo solo aparece acá cuando la sidebar está cerrada */}
-        {!abierta && <span className="navbar-logo">Hawkins Anomalies</span>}
+        {!abierta && (
+          <span className="navbar-logo">
+            <span className="navbar-logo-corto">HA</span>
+            <span className="navbar-logo-completo">Hawkins Anomalies</span>
+          </span>
+        )}
       </div>
 
       <div className="navbar-right">
@@ -48,13 +53,20 @@ function Navbar() {
 
             <div className="navbar-user" ref={menuRef}>
               <button className="navbar-user-btn" onClick={() => setMenuAbierto(!menuAbierto)}>
-                <span className="navbar-avatar" />
+                <span
+                  className="navbar-avatar"
+                  style={usuario?.avatar ? { backgroundImage: `url(http://localhost:3000${usuario.avatar})` } : undefined}
+                >
+                  {!usuario?.avatar && usuario?.nombre.charAt(0).toUpperCase()}
+                </span>
                 <span className="navbar-username">{usuario.nombre}</span>
               </button>
 
               {menuAbierto && (
                 <div className="navbar-menu">
-                  <button onClick={() => setMenuAbierto(false)}>Editar perfil</button>
+                  <button onClick={() => { setMenuAbierto(false); navigate("/perfil"); }}>
+                    Editar perfil
+                  </button>
                   <button onClick={handleLogout}>Cerrar sesión</button>
                 </div>
               )}

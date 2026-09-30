@@ -26,9 +26,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
   }
+  function actualizarUsuario(usuarioActualizado: Usuario) {
+    setUsuario(usuarioActualizado);
+    localStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+  }
 
   return (
-    <AuthContext.Provider value={{ usuario, token, login, logout }}>
+    <AuthContext.Provider value={{ usuario, token, login, logout, actualizarUsuario }}>
       {children}
     </AuthContext.Provider>
   );

@@ -804,6 +804,7 @@ setErrorComentarios("");
 
         <p className="detalle-cuerpo">{reporte.cuerpo}</p>
 
+
 <section className="detalle-resoluciones">
   <h2>Resoluciones</h2>
 
@@ -890,6 +891,15 @@ setErrorComentarios("");
     )
   )}
 </section>
+
+        {reporte.imagenes.length > 0 && (
+          <div className="detalle-imagenes">
+            {reporte.imagenes.map((img) => (
+              <img key={img.idImagen} src={`http://localhost:3000${img.url}`} alt={reporte.titulo} />
+            ))}
+          </div>
+        )}
+
 
         <section className="detalle-reacciones">
   <h2>Reacciones</h2>
@@ -986,15 +996,6 @@ setErrorComentarios("");
     <p className="detalle-mensaje detalle-error">{errorReacciones}</p>
   )}
 </section>
-
-        {reporte.imagenes.length > 0 && (
-          <div className="detalle-imagenes">
-            {reporte.imagenes.map((img) => (
-              <img key={img.idImagen} src={`http://localhost:3000${img.url}`} alt={reporte.titulo} />
-            ))}
-          </div>
-        )}
-
        <section className="detalle-comentarios">
         <h2>Comentarios</h2>
         {usuario ? (
