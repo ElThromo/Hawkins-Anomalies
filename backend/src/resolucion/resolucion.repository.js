@@ -43,14 +43,43 @@ async function crearResolucion(datos) {
 async function actualizarResolucion(id, datos) {
     return await prisma.resolucion.update({
         where: { idResolucion: id },
-        data: datos
+        data: {
+            resolucion: datos.resolucion.trim(),
+            cuerpoResolucion: datos.cuerpoResolucion.trim()
+        }
     });
 }
 
 // ELIMINAR UNA RESOLUCIÓN
 async function eliminarResolucion(id) {
-    return await prisma.resolucion.delete({
-        where: { idResolucion: id }
+    return await prisma.$transaction(async (tx) => {
+        const eliminada = await tx.resolucion.delete({
+            where: { idResolucion: id }
+        });
+
+        await tx.reporte.updateMany({
+            where: {
+                idReporte: eliminada.idReporte,
+                estado: "RESUELTO",
+                resoluciones: { none: {} }
+            },
+            data: {
+                estado: "EN_INVESTIGACION"
+            }
+        });
+
+        const reporte = await tx.reporte.findUniqueOrThrow({
+            where: { idReporte: eliminada.idReporte },
+            select: {
+                idReporte: true,
+                estado: true
+            }
+        });
+
+        return {
+            idResolucion: eliminada.idResolucion,
+            reporte
+        };
     });
 }
 

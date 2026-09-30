@@ -125,27 +125,26 @@ async function eliminarResolucion(req, res) {
     try {
         const id = Number(req.params.id);
 
-        if (!Number.isInteger(id) || id <= 0) {
+        if (!Number.isSafeInteger(id) || id <= 0) {
             return res.status(400).json({
                 error: "El ID de la resolución debe ser un entero positivo"
             });
         }
 
-        const resolucion =
-            await resolucionService.obtenerResolucionPorId(id);
+        const resultado = await resolucionService.eliminarResolucion(id);
 
-        if (!resolucion) {
+        res.json({
+            mensaje: "Resolución eliminada",
+            idResolucion: resultado.idResolucion,
+            reporte: resultado.reporte
+        });
+    } catch (error) {
+        if (error.code === "P2025") {
             return res.status(404).json({
                 error: "Resolución no encontrada"
             });
         }
 
-        await resolucionService.eliminarResolucion(id);
-
-        res.json({
-            mensaje: "Resolución eliminada"
-        });
-    } catch (error) {
         console.error(error);
         res.status(500).json({
             error: "Error al eliminar la resolución"
