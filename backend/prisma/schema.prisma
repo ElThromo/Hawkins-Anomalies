@@ -80,6 +80,7 @@ enum EstadoReporte {
   NO_VERIFICADO
   EN_INVESTIGACION
   VERIFICADO
+  RESUELTO
 }
 
 model ImagenReporte {

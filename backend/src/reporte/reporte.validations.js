@@ -1,3 +1,4 @@
+
 function validarReporte(req, res, next) {
     const { titulo, cuerpo, idZona, idCategoria } = req.body;
 
@@ -34,7 +35,12 @@ function validarActualizacionReporte(req, res, next) {
         return res.status(400).json({ error: "El cuerpo debe ser texto" });
     }
 
-    const estadosValidos = ["NO_VERIFICADO", "EN_INVESTIGACION", "VERIFICADO"];
+    const estadosValidos = [
+  "NO_VERIFICADO",
+  "EN_INVESTIGACION",
+  "VERIFICADO",
+  "RESUELTO"
+];
     if (estado && !estadosValidos.includes(estado)) {
         return res.status(400).json({ error: "Estado no válido" });
     }

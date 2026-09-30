@@ -1,8 +1,15 @@
+
 const prisma = require("../prisma");
 
 // OBTENER TODAS LAS RESOLUCIONES
-async function obtenerResoluciones() {
-    return await prisma.resolucion.findMany();
+async function obtenerResoluciones(idReporte) {
+    return await prisma.resolucion.findMany({
+        where: idReporte === undefined ? {} : { idReporte },
+        orderBy: [
+            { fechaHora: "desc" },
+            { idResolucion: "desc" }
+        ]
+    });
 }
 
 // OBTENER UNA RESOLUCIÓN POR ID
@@ -14,8 +21,21 @@ async function obtenerResolucionPorId(id) {
 
 // CREAR UNA RESOLUCIÓN
 async function crearResolucion(datos) {
-    return await prisma.resolucion.create({
-        data: datos
+    return await prisma.$transaction(async (tx) => {
+        const resolucion = await tx.resolucion.create({
+            data: {
+                idReporte: datos.idReporte,
+                resolucion: datos.resolucion.trim(),
+                cuerpoResolucion: datos.cuerpoResolucion.trim()
+            }
+        });
+
+        await tx.reporte.update({
+            where: { idReporte: datos.idReporte },
+            data: { estado: "RESUELTO" }
+        });
+
+        return resolucion;
     });
 }
 
@@ -23,14 +43,43 @@ async function crearResolucion(datos) {
 async function actualizarResolucion(id, datos) {
     return await prisma.resolucion.update({
         where: { idResolucion: id },
-        data: datos
+        data: {
+            resolucion: datos.resolucion.trim(),
+            cuerpoResolucion: datos.cuerpoResolucion.trim()
+        }
     });
 }
 
 // ELIMINAR UNA RESOLUCIÓN
 async function eliminarResolucion(id) {
-    return await prisma.resolucion.delete({
-        where: { idResolucion: id }
+    return await prisma.$transaction(async (tx) => {
+        const eliminada = await tx.resolucion.delete({
+            where: { idResolucion: id }
+        });
+
+        await tx.reporte.updateMany({
+            where: {
+                idReporte: eliminada.idReporte,
+                estado: "RESUELTO",
+                resoluciones: { none: {} }
+            },
+            data: {
+                estado: "EN_INVESTIGACION"
+            }
+        });
+
+        const reporte = await tx.reporte.findUniqueOrThrow({
+            where: { idReporte: eliminada.idReporte },
+            select: {
+                idReporte: true,
+                estado: true
+            }
+        });
+
+        return {
+            idResolucion: eliminada.idResolucion,
+            reporte
+        };
     });
 }
 

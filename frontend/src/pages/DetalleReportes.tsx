@@ -17,6 +17,14 @@ interface Reporte {
   imagenes: { idImagen: number; url: string }[];
 }
 
+interface Resolucion {
+  idResolucion: number;
+  idReporte: number;
+  resolucion: string;
+  cuerpoResolucion: string;
+  fechaHora: string;
+}
+
 interface Comentario {
   idComentario: number;
   texto: string;
@@ -46,12 +54,27 @@ interface Reaccion {
 const ESTADO_LABELS: Record<string, string> = {
   NO_VERIFICADO: "No verificado",
   EN_INVESTIGACION: "En investigación",
-  VERIFICADO: "Verificado"
+  VERIFICADO: "Verificado",
+  RESUELTO: "Resuelto"
 };
 
 function DetalleReporte() {
   const { id } = useParams();
   const { usuario, token } = useAuth();
+
+const [resoluciones, setResoluciones] = useState<Resolucion[]>([]);
+const [cargandoResoluciones, setCargandoResoluciones] = useState(true);
+const [errorResoluciones, setErrorResoluciones] = useState("");
+
+const [tituloResolucion, setTituloResolucion] = useState("");
+const [cuerpoResolucion, setCuerpoResolucion] = useState("");
+const [guardandoResolucion, setGuardandoResolucion] = useState(false);
+
+const [idResolucionEditando, setIdResolucionEditando] =
+  useState<number | null>(null);
+
+const puedeGestionarResoluciones =
+  usuario?.rol === "ADMIN" || usuario?.rol === "INVESTIGADOR";
 
   const [comentarios, setComentarios] = useState<Comentario[]>([]);
   const [nuevoComentario, setNuevoComentario] = useState("");
@@ -75,6 +98,53 @@ const [idComentarioRespondiendo, setIdComentarioRespondiendo] =
 const [textoRespuesta, setTextoRespuesta] = useState("");
 
 const [enviandoRespuesta, setEnviandoRespuesta] = useState(false);
+
+useEffect(() => {
+  const controlador = new AbortController();
+
+  async function cargarResoluciones() {
+    setCargandoResoluciones(true);
+    setErrorResoluciones("");
+    setResoluciones([]);
+
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3000/resoluciones?idReporte=${id}`,
+        { signal: controlador.signal }
+      );
+
+      const datos = await respuesta.json();
+
+      if (!respuesta.ok) {
+        throw new Error(
+          datos.error || "No se pudieron cargar las resoluciones"
+        );
+      }
+
+      if (!controlador.signal.aborted) {
+        setResoluciones(datos);
+      }
+    } catch (error) {
+      if (!controlador.signal.aborted) {
+        setErrorResoluciones(
+          error instanceof Error
+            ? error.message
+            : "No se pudo conectar con el servidor"
+        );
+      }
+    } finally {
+      if (!controlador.signal.aborted) {
+        setCargandoResoluciones(false);
+      }
+    }
+  }
+
+  if (id) {
+    cargarResoluciones();
+  }
+
+  return () => controlador.abort();
+}, [id]);
 
   useEffect(() => {
     async function cargarReporte() {
@@ -176,6 +246,159 @@ setTiposReaccion(datosTipos);
     cargarReacciones();
   }
 }, [id]);
+
+async function guardarResolucion(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+
+  if (guardandoResolucion || cargandoResoluciones) return;
+
+  setErrorResoluciones("");
+
+  if (!token || !puedeGestionarResoluciones) {
+    setErrorResoluciones(
+      "Solo administradores e investigadores pueden gestionar resoluciones."
+    );
+    return;
+  }
+
+  if (!reporte) return;
+
+  const titulo = tituloResolucion.trim();
+  const cuerpo = cuerpoResolucion.trim();
+
+  if (!titulo || !cuerpo) {
+    setErrorResoluciones("Completá el título y la descripción.");
+    return;
+  }
+
+  const editando = idResolucionEditando !== null;
+  const url = editando
+    ? `http://localhost:3000/resoluciones/${idResolucionEditando}`
+    : "http://localhost:3000/resoluciones";
+
+  setGuardandoResolucion(true);
+
+  try {
+    const respuesta = await fetch(url, {
+      method: editando ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        idReporte: reporte.idReporte,
+        resolucion: titulo,
+        cuerpoResolucion: cuerpo
+      })
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      setErrorResoluciones(
+        datos.error || "No se pudo guardar la resolución."
+      );
+      return;
+    }
+
+    const guardada: Resolucion = datos.resolucion;
+
+    setResoluciones((anteriores) =>
+      editando
+        ? anteriores.map((resolucion) =>
+            resolucion.idResolucion === guardada.idResolucion
+              ? guardada
+              : resolucion
+          )
+        : [guardada, ...anteriores]
+    );
+
+    if (!editando) {
+      setReporte((actual) =>
+        actual?.idReporte === reporte.idReporte
+          ? { ...actual, estado: "RESUELTO" }
+          : actual
+      );
+    }
+
+    setIdResolucionEditando(null);
+    setTituloResolucion("");
+    setCuerpoResolucion("");
+  } catch (error) {
+    console.error(error);
+    setErrorResoluciones("No se pudo conectar con el servidor.");
+  } finally {
+    setGuardandoResolucion(false);
+  }
+}
+
+async function eliminarResolucion(idResolucion: number) {
+  if (guardandoResolucion || cargandoResoluciones) return;
+
+  setErrorResoluciones("");
+
+  if (!token || !puedeGestionarResoluciones) {
+    setErrorResoluciones(
+      "Solo administradores e investigadores pueden eliminar resoluciones."
+    );
+    return;
+  }
+
+  const confirmar = window.confirm(
+    "¿Querés eliminar esta resolución? Esta acción no se puede deshacer. " +
+    "Si es la última y el reporte está Resuelto, volverá a En investigación."
+  );
+
+  if (!confirmar) return;
+
+  setGuardandoResolucion(true);
+
+  try {
+    const respuesta = await fetch(
+      `http://localhost:3000/resoluciones/${idResolucion}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      setErrorResoluciones(
+        datos.error || "No se pudo eliminar la resolución."
+      );
+      return;
+    }
+
+    setResoluciones((anteriores) =>
+      anteriores.filter(
+        (resolucion) => resolucion.idResolucion !== datos.idResolucion
+      )
+    );
+
+    setReporte((actual) => {
+  if (!actual || actual.idReporte !== datos.reporte.idReporte) {
+    return actual;
+  }
+
+  return { ...actual, estado: datos.reporte.estado };
+});
+
+    if (idResolucionEditando === datos.idResolucion) {
+      setIdResolucionEditando(null);
+      setTituloResolucion("");
+      setCuerpoResolucion("");
+    }
+  } catch (error) {
+    console.error(error);
+    setErrorResoluciones("No se pudo conectar con el servidor.");
+  } finally {
+    setGuardandoResolucion(false);
+  }
+}
 
 async function reaccionar(idTipoReaccion: number) {
   setErrorReacciones("");
@@ -670,6 +893,150 @@ setErrorComentarios("");
 
         <p className="detalle-cuerpo">{reporte.cuerpo}</p>
 
+
+<section className="detalle-resoluciones">
+  <h2>Resoluciones</h2>
+
+{puedeGestionarResoluciones && (
+  <form
+    className="resolucion-form"
+    onSubmit={guardarResolucion}
+  >
+<h3>
+  {idResolucionEditando !== null
+    ? "Editar resolución"
+    : "Agregar resolución"}
+</h3>
+
+    <label htmlFor="titulo-resolucion">Título</label>
+    <input
+      id="titulo-resolucion"
+      type="text"
+      value={tituloResolucion}
+      onChange={(e) => setTituloResolucion(e.target.value)}
+      maxLength={191}
+      required
+      disabled={guardandoResolucion}
+      placeholder="Ejemplo: Anomalía controlada"
+    />
+
+    <label htmlFor="cuerpo-resolucion">
+      ¿Cómo se resolvió el reporte?
+    </label>
+    <textarea
+      id="cuerpo-resolucion"
+      value={cuerpoResolucion}
+      onChange={(e) => setCuerpoResolucion(e.target.value)}
+      rows={5}
+      required
+      disabled={guardandoResolucion}
+      placeholder="Describí las acciones realizadas y el resultado."
+    />
+
+<p className="detalle-mensaje">
+  {idResolucionEditando !== null
+    ? "Se actualizarán el título y la descripción de esta resolución."
+    : "Al guardar, el reporte pasará al estado Resuelto."}
+</p>
+
+<button
+  type="submit"
+  disabled={guardandoResolucion || cargandoResoluciones}
+>
+  {guardandoResolucion
+    ? "Guardando..."
+    : idResolucionEditando !== null
+      ? "Guardar cambios"
+      : "Guardar resolución"}
+</button>
+
+{idResolucionEditando !== null && (
+  <button
+    type="button"
+    disabled={guardandoResolucion}
+    onClick={() => {
+      setIdResolucionEditando(null);
+      setTituloResolucion("");
+      setCuerpoResolucion("");
+      setErrorResoluciones("");
+    }}
+  >
+    Cancelar
+  </button>
+)}
+  </form>
+)}
+
+  {cargandoResoluciones && (
+    <p className="detalle-mensaje">Cargando resoluciones...</p>
+  )}
+
+  {errorResoluciones && (
+    <p className="detalle-error" role="alert">
+      {errorResoluciones}
+    </p>
+  )}
+
+  {!cargandoResoluciones && !errorResoluciones && (
+    resoluciones.length === 0 ? (
+      <p className="detalle-mensaje">
+        Este reporte todavía no tiene resoluciones.
+      </p>
+    ) : (
+      resoluciones.map((resolucion) => (
+<article
+  className="resolucion-item"
+  key={resolucion.idResolucion}
+>
+  <div className="resolucion-header">
+    <div className="resolucion-info">
+      <h3>{resolucion.resolucion}</h3>
+
+      <time
+        className="detalle-meta"
+        dateTime={resolucion.fechaHora}
+      >
+        {new Date(resolucion.fechaHora).toLocaleString("es-AR")}
+      </time>
+    </div>
+
+    {puedeGestionarResoluciones && (
+      <div className="resolucion-acciones">
+        <button
+          type="button"
+          disabled={guardandoResolucion || cargandoResoluciones}
+          onClick={() => {
+            setIdResolucionEditando(resolucion.idResolucion);
+            setTituloResolucion(resolucion.resolucion);
+            setCuerpoResolucion(resolucion.cuerpoResolucion);
+            setErrorResoluciones("");
+            document.getElementById("titulo-resolucion")?.focus();
+          }}
+        >
+          Editar
+        </button>
+
+        <button
+          type="button"
+          className="resolucion-eliminar"
+          disabled={guardandoResolucion || cargandoResoluciones}
+          onClick={() => eliminarResolucion(resolucion.idResolucion)}
+        >
+          Eliminar
+        </button>
+      </div>
+    )}
+  </div>
+
+  <p className="resolucion-texto">
+    {resolucion.cuerpoResolucion}
+  </p>
+</article>
+      ))
+    )
+  )}
+</section>
+
         {reporte.imagenes.length > 0 && (
           <div className="detalle-imagenes">
             {reporte.imagenes.map((img) => (
@@ -677,6 +1044,7 @@ setErrorComentarios("");
             ))}
           </div>
         )}
+
 
         <section className="detalle-reacciones">
   <h2>Reacciones</h2>
